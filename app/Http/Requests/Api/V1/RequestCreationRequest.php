@@ -6,17 +6,14 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CardCreationRequest extends FormRequest
+class RequestCreationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if (auth()->user()->role == 'admin') {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     /**
@@ -27,13 +24,10 @@ class CardCreationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'brand' => ['required', 'string'],
-            'category' => ['required', 'string'],
-            'type' => ['required', 'string', 'unique:cards,type'],
-            'rate' => ['required', 'numeric'],
-            'image' => ['sometimes', 'mimes:png,jpg,jpeg,webp', 'max:2048']
+            //
         ];
     }
+
     public function failedValidation (Validator $validator)
     {
         throw new HttpResponseException(response()->json([

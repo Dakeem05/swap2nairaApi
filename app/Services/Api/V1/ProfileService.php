@@ -5,6 +5,8 @@ namespace App\Services\Api\V1;
 use App\Mail\UserForgotPassword;
 use App\Mail\UserVerifyEmail;
 use App\Models\PasswordResetToken;
+use App\Models\Request;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Services\Api\V1\WalletService;
@@ -123,14 +125,17 @@ class ProfileService
         return true;
     }
 
-    public function delete (int $user_id)
-    {
-        $user = User::where('id', $user_id)->first();
-        if ($user !== null) {
-            $user->forceDelete();
-            return true;
+        public function delete (int $user_id)
+        {
+            $user = User::where('id', $user_id)->first();
+            if ($user !== null) {
+                Wallet::where('user_id', $user_id)->update(['user_id' => null]);
+                Transaction::where('user_id', $user_id)->update(['user_id' => null]);
+                Request::where('user_id', $user_id)->update(['user_id' => null]);
+                $user->forceDelete();
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 }
 

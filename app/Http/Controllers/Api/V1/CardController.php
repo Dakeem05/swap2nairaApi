@@ -47,6 +47,21 @@ class CardController extends Controller
         return $this->serverErrorResponse('An error occurred.');
     }
 
+    public function getGiftCardBrands()
+    {
+        $brands = config('brands');
+
+        return $this->successResponse($brands);
+    }
+
+    public function checkIfGiftCardExists(String $brand)
+    {
+        $res = $this->card_service->checkIfGiftCardExists($brand);
+        if ($res === true) {
+            return $this->successResponse('Card exists');
+        }
+        return $this->errorResponse('Card does not exist');
+    }
     /**
      * Display the specified resource.
      */

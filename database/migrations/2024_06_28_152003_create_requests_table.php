@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
             $table->uuid()->index();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('payment_method')->default('naira_wallet');
             $table->foreignId('card_id')->constrained('cards');
             $table->unsignedBigInteger('rate');

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\CardController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\RequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function () {
@@ -39,9 +40,17 @@ Route::middleware('api')->group(function () {
                 Route::get('index', 'index');
                 Route::get('show/{id}', 'show');
             });
+
+            Route::prefix('request')->controller(RequestController::class)->group(function () {
+                Route::get('get-brands', 'getBrands');
+                Route::post('get-categories', 'getCategories');
+                // Route::get('show/{id}', 'show');
+            });
             
             Route::group(['middleware' => 'isAdmin', 'prefix' => '/admin'], function () {
                 Route::resource('card', CardController::class);
+                Route::get('card-brands', [CardController::class, 'getGiftCardBrands']);
+                Route::get('card-check/{brand}', [CardController::class, 'checkIfGiftCardExists']);
             });
         });
     });

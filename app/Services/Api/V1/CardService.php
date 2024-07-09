@@ -2,20 +2,9 @@
 
 namespace App\Services\Api\V1;
 
-use App\Mail\UserForgotPassword;
-use App\Mail\UserVerifyEmail;
-use App\Models\Card;
-use App\Models\PasswordResetToken;
-use App\Models\User;
-use App\Models\Wallet;
-use App\Services\Api\V1\WalletService;
 use App\Traits\Api\V1\ApiResponseTrait;
-use Carbon\Carbon;
-use Illuminate\Support\Env;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Models\Card;
+use App\Models\User;
 
 class CardService
 {
@@ -27,21 +16,42 @@ class CardService
         return $card;
     }
 
+    public function checkIfGiftCardExists ($brand)
+    {
+        $card = Card::where('brand', $brand)->exists();
+        if ($card) {
+            return true;
+        }
+        return false;
+    }
+
+
     public function store (Object $request, Int $user_id)
     {
         
-        $image = time().'.'.$request->image->getClientOriginalExtension();
-        $destinationPath = public_path().'/uploads/images/brandImages/';
-        $request->image->move($destinationPath, $image);
-        $path = User::url().'/images/'.$image;
+        if (isset($request->image)) {
+            $image = time().'.'.$request->image->getClientOriginalExtension();
+            $destinationPath = public_path().'/uploads/images/brandImages/';
+            $request->image->move($destinationPath, $image);
+            $path = User::url().'/images/'.$image;
+            $card = Card::create([
+                'brand' => $request->brand,
+                'category' => $request->category,
+                'type' => $request->type,
+                'rate' => $request->rate,
+                'image' => $path
+            ]);
+        } else{
+            $instance = Card::where('brand', $request->brand)->first();
+            $card = Card::create([
+                'brand' => $request->brand,
+                'category' => $request->category,
+                'type' => $request->type,
+                'rate' => $request->rate,
+                'image' => $instance->image
+            ]);
+        }
 
-        $card = Card::create([
-            'brand' => $request->brand,
-            'category' => $request->category,
-            'type' => $request->type,
-            'rate' => $request->rate,
-            'image' => $path
-        ]);
 
         return $card;   
     }

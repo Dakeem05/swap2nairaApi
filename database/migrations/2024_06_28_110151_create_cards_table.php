@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid()->index();
             $table->string('brand');
-            $table->enum('category', ['physical', 'ecode']);
+            $table->enum('category', ['physical', 'ecode', 'both']);
             $table->string('type');
             $table->string('image');
             $table->unsignedBigInteger('rate');

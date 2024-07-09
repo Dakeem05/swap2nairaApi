@@ -31,8 +31,6 @@ class AuthenticationService
         $otp = PasswordResetToken::GenerateOtp($user->email);
         
         Mail::to($user->email)->send(new UserVerifyEmail($user->email, $user->name, $otp));
-
-        // $this->createWallet($user->id);
         
         return $user;
     }
