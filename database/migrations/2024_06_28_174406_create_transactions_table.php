@@ -15,10 +15,15 @@ return new class extends Migration
             $table->id();
             $table->uuid()->index();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('request_id')->constrained('requests');
+            $table->foreignId('request_id')->nullable()->constrained('requests');
             $table->unsignedBigInteger('amount');
+            $table->enum('status', ['pending', 'confirmed', 'declined'])->default('pending');
             $table->string('type');
-            $table->enum('status', ['pending', 'confirmed', 'declined']);
+            $table->string('reference')->nullable();
+            $table->string('tnx_id')->nullable();
+            $table->string('flw_status')->nullable();
+            // $table->unsignedBigInteger('flw_fee')->nullable();
+            $table->double('flw_fee')->nullable();
             $table->softDeletes()->index();
             $table->timestamps();
         });

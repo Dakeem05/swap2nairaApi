@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthenticationController;
 use App\Http\Controllers\Api\V1\CardController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\RequestController;
+use App\Http\Controllers\Api\V1\WalletController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function () {
@@ -44,7 +45,12 @@ Route::middleware('api')->group(function () {
             Route::prefix('request')->controller(RequestController::class)->group(function () {
                 Route::get('get-brands', 'getBrands');
                 Route::post('get-categories', 'getCategories');
-                // Route::get('show/{id}', 'show');
+                Route::post('', 'store');
+            });
+
+            Route::prefix('wallet')->controller(WalletController::class)->group(function () {
+                Route::get('balance', 'getUserBalance');
+                Route::post('withdraw', 'withdraw');
             });
             
             Route::group(['middleware' => 'isAdmin', 'prefix' => '/admin'], function () {

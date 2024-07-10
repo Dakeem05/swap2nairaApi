@@ -51,8 +51,6 @@ class CardService
                 'image' => $instance->image
             ]);
         }
-
-
         return $card;   
     }
 
@@ -70,6 +68,7 @@ class CardService
                 'category' => isset($request->category)? $request->category : $card->category,
                 'type' => isset($request->type)? $request->type : $card->type,
                 'rate' => isset($request->rate)? $request->rate : $card->rate,
+                'active' => isset($request->is_active)? $request->is_active : $card->active,
             ]);
             return true;
         }

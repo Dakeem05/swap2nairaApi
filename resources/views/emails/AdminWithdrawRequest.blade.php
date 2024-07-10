@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>Withdrawal Request</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
@@ -33,24 +33,9 @@
         .highlight {
             color: #41aef1;
         }
-        .otp-text {
-            text-align: center;
+        .message-text {
             font-size: 18px;
             margin-bottom: 20px;
-        }
-        .otp-code {
-            display: block;
-            width: 100%;
-            max-width: 200px;
-            margin: 0 auto;
-            padding: 10px;
-            background-color: #1A1D6E;
-            color: #ffffff;
-            text-align: center;
-            border-radius: 4px;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 2px;
         }
         .signature {
             text-align: right;
@@ -66,13 +51,12 @@
                 Swap<span class="highlight">2Naira</span>
             </h1>
         </div>
-        <h2>Hello, {{ $name }}!</h2>
-        <p class="otp-text">
-            You requested to change your password. To complete your action, please use the following OTP code:
+        <h2>Hello Admin,</h2>
+        <p class="message-text">
+            We would like to inform you that <strong>{{ $name }}</strong> has made a withdrawal request for the amount of <strong>{{ $amount }}</strong>.
         </p>
-        <div class="otp-code">{{ $otp }}</div>
-        <p class="otp-text">
-            If you did not request this code, please ignore this email.
+        <p class="message-text">
+            Please note this payment is already in transaction and both you and the user would be notified when successful.
         </p>
         <p class="signature">
             Best Regards,<br>

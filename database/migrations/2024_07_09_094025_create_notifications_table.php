@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cards', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->uuid()->index();
-            $table->string('brand');
-            $table->enum('category', ['physical', 'ecode', 'both']);
-            $table->string('type');
-            $table->string('image');
-            $table->unsignedBigInteger('rate');
-            $table->boolean('active')->default(true);
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->text('message');
+            $table->boolean('is_read')->default(false);
             $table->softDeletes()->index();
             $table->timestamps();
         });
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cards');
+        Schema::dropIfExists('notifications');
     }
 };

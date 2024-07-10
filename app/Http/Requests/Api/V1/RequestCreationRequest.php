@@ -24,7 +24,13 @@ class RequestCreationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'card_id' => ['required', 'exists:cards,id'],
+            'number' => ['required', 'numeric', 'min:20'],
+            'category' => ['required', 'string'],
+            'images' => ['array', 'required_unless:category,ecode,both', ],
+            'images.*' => ['mimes:jpeg,png,jpg,svg,webp,bmp','max:2048', 'required_unless:category,ecode,both', ],
+            'ecodes' => ['array', 'required_unless:category,physical,both', ],
+            'ecodes.*' => ['string', 'required_unless:category,physical,both',]
         ];
     }
 

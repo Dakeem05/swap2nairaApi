@@ -18,15 +18,16 @@ return new class extends Migration
             $table->string('payment_method')->default('naira_wallet');
             $table->foreignId('card_id')->constrained('cards');
             $table->unsignedBigInteger('rate');
+            $table->unsignedBigInteger('number');
             $table->unsignedBigInteger('total_amount');
             $table->json('images')->nullable();
             $table->json('ecodes')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'declined']);
+            $table->enum('status', ['pending', 'confirmed', 'declined'])->default('pending');
             $table->softDeletes()->index();
             $table->timestamps();
         });
     }
-
+    
     /**
      * Reverse the migrations.
      */

@@ -4,6 +4,7 @@ namespace App\Services\Api\V1;
 
 use App\Mail\UserForgotPassword;
 use App\Mail\UserVerifyEmail;
+use App\Models\Notification;
 use App\Models\PasswordResetToken;
 use App\Models\User;
 use App\Services\Api\V1\WalletService;
@@ -57,14 +58,12 @@ class AuthenticationService
                 $this->createWallet($user->id);
                 $user->update(['email_verified_at' => Carbon::now()]);
                 $instance->delete();
+                Notification::Notify($user->id, "Welcome to swap2naira.com, your account has been successfully verified.");
+                $admins = User::where('role', 'admin')->select('id')->get();
+                foreach ($admins as $key => $admin) {
+                    Notification::Notify($admin, "A new user has just registered on swap2naira.com");
+                }
 
-                // if($user->referrer_code == null){
-                //     return true;
-                // } else {
-                //     $this->rewardReferrer($user->referrer_code);
-                //     return true;
-                // }
-                
                 return true;
             } else {
                 return false;
@@ -80,6 +79,7 @@ class AuthenticationService
         
         if ($user !== null){
             $otp = PasswordResetToken::GenerateOtp($user->email);
+            Notification::Notify($user->id, "You have just requested for a password reset.");
             Mail::to($user->email)->send(new UserForgotPassword($user->email, $user->name, $otp));
             return true;
         } else {
@@ -95,7 +95,6 @@ class AuthenticationService
             if($user_data->otp == $instance->token){
                 $instance->otp_verified_at = Carbon::now();
                 $instance->save();
-                
                 return true;
             } else {
                 return false;
@@ -114,6 +113,7 @@ class AuthenticationService
                 $user->update([
                 'password' => Hash::make($user_data->password),
             ]);
+            Notification::Notify($user->id, "You have just changed your password.");
             $instance->delete();
             return true;
         } else {

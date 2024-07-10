@@ -12,4 +12,8 @@ class Card extends Model
     use HasFactory, CreateUuid, SoftDeletes;
     
     protected $guarded = [];
+
+    protected $casts = [
+        'active' => 'boolean'
+    ];
 }

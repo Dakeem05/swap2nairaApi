@@ -4,6 +4,7 @@ namespace App\Services\Api\V1;
 
 use App\Mail\UserForgotPassword;
 use App\Mail\UserVerifyEmail;
+use App\Models\Notification;
 use App\Models\PasswordResetToken;
 use App\Models\Request;
 use App\Models\Transaction;
@@ -55,6 +56,7 @@ class ProfileService
             'bank_code' => $request->bank_code,
             'bank_name' => $request->bank_name,
         ]);
+        Notification::Notify($user_id, "Congratulations on your successful bank account setup. You can now start making payments.");
         return true;
     }
 
@@ -64,6 +66,8 @@ class ProfileService
         $wallet->update([
             'pin' => Hash::make($request->pin),
         ]);
+        Notification::Notify($user_id, "Congratulations on your successful withdrawal pin setup. You can now start making payments.");
+
         return true;
     }
 
@@ -76,7 +80,7 @@ class ProfileService
                     'pin' => Hash::make($request->new_pin),
                 ]);
     
-                //carry out notifications here later
+                Notification::Notify($user_id, "You just changed your withdrawal pin.");
     
                 return true;
             }
@@ -93,7 +97,7 @@ class ProfileService
                 'password' => Hash::make($request->new_password),
             ]);
 
-            //carry out notifications here later
+            Notification::Notify($user->id, "You just changed your password.");
 
             return true;
         }
@@ -119,23 +123,21 @@ class ProfileService
             'birthmonth' => isset($request->birthmonth)? $request->birthmonth : $user->birthmonth,
             'name' => isset($request->name)? $request->name : $user->name,
         ]);
-
-        //notify user of changes
-
+        Notification::Notify($user->id, "You've just updated your profile.");
         return true;
     }
 
-        public function delete (int $user_id)
-        {
-            $user = User::where('id', $user_id)->first();
-            if ($user !== null) {
-                Wallet::where('user_id', $user_id)->update(['user_id' => null]);
-                Transaction::where('user_id', $user_id)->update(['user_id' => null]);
-                Request::where('user_id', $user_id)->update(['user_id' => null]);
-                $user->forceDelete();
-                return true;
-            }
-            return false;
+    public function delete (int $user_id)
+    {
+        $user = User::where('id', $user_id)->first();
+        if ($user !== null) {
+            Wallet::where('user_id', $user_id)->update(['user_id' => null]);
+            Transaction::where('user_id', $user_id)->update(['user_id' => null]);
+            Request::where('user_id', $user_id)->update(['user_id' => null]);
+            $user->forceDelete();
+            return true;
         }
+        return false;
+    }
 }
 

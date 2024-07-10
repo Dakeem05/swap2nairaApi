@@ -17,4 +17,11 @@ class Request extends Model
         'images' => 'object',
         'ecodes' => 'object',
     ];
+
+    protected $hidden = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 }
