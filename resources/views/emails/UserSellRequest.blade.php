@@ -54,7 +54,7 @@
         </div>
         <h2>Hello, {{ $name }}!</h2>
         <p class="message-text">
-            We are pleased to inform you that your gift card sell request of <strong>{{ $request->number }}</strong> <strong>{{ $card->type }}</strong> cards at <strong>{{ $card->rate }}</strong> each, totaling <strong>{{ $sum }}</strong>, has been successfully submitted.
+            We are pleased to inform you that your gift card sell request of <strong>{{ $number }}</strong> <strong>{{ $type }}</strong> cards at <strong>₦{{ $rate }}</strong> each, totaling <strong>₦{{ $sum }}</strong>, has been successfully submitted.
         </p>
         <p class="message-text">
             Our admins will verify the transaction and credit your wallet accordingly.

@@ -68,12 +68,9 @@
         </div>
         <h2>Hello, {{ $name }}!</h2>
         <p class="otp-text">
-            You requested to change your password. To complete your action, please use the following OTP code:
+            Verify your email using the following OTP code:
         </p>
         <div class="otp-code">{{ $otp }}</div>
-        <p class="otp-text">
-            If you did not request this code, please ignore this email.
-        </p>
         <p class="signature">
             Best Regards,<br>
             Swap2Naira Team

@@ -40,7 +40,26 @@ class NotificationController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $_notification = Notification::find($id);
+        if ($_notification !== null) {
+            $_notification->update([
+                'is_read' => true
+            ]);
+            return $this->successResponse($_notification);
+        }
+        return $this->errorResponse('Notification not found', null, 404);
+    }
+
+    public function read (string $id)
+    {
+        $_notification =  Notification::where('id', $id)->first();
+        if ($_notification !== null) {
+            $_notification->update([
+                'is_read' => true
+            ]);
+            return $this->successResponse('Notification has been marked as read.');
+        }
+        return $this->errorResponse('Notification not found', null, 404);
     }
 
     /**
@@ -64,8 +83,11 @@ class NotificationController extends Controller
      */
     public function destroy(string $id)
     {
-        $_notification = Notification::findOrFail($id);
-        $_notification->delete();
-        return $this->successResponse('Notification deleted successfully');
+        $_notification = Notification::find($id);
+        if ($_notification !== null) {
+            $_notification->delete();
+            return $this->successResponse('Notification deleted successfully');
+        }
+        return $this->errorResponse('Notification not found', null, 404);
     }
 }

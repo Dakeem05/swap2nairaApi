@@ -39,4 +39,35 @@ class RequestController extends Controller
         }
         return $this->errorResponse('Error creating request');
     }
+
+    public function getRequests()
+    {
+        $res = $this->request_service->getRequests();
+        return $this->successResponse($res);
+    }
+    public function getPendingRequests()
+    {
+        $res = $this->request_service->getPendingRequests();
+        return $this->successResponse($res);
+    }
+    public function getRequest(string $uuid)
+    {
+        $res = $this->request_service->getRequest($uuid);
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->errorResponse('Request not found.', null, 404);
+    }
+    public function confirmRequest(string $uuid, bool $action)
+    {
+        $res = $this->request_service->confirmRequest($uuid, $action);
+        if ($res === 'treated') {
+            return $this->errorResponse('Request has already been accepted or rejected');
+            // return $this->successResponse('Request confirmed successfully.');
+        } else if ($res === 'rejected') {
+            return $this->successResponse('Request declined successfully.');
+        } else if ($res === 'confirmed') {
+            return $this->successResponse('Request confirmed successfully.');
+        }
+    }
 }

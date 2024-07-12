@@ -11,6 +11,7 @@ use App\Models\Wallet;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class WalletService
@@ -59,7 +60,7 @@ class WalletService
                 "currency"=> "NGN",
                 "debit_currency"=> "NGN",
                 "reference"=> $random,
-                "narration" => "Swap2Naira Transfer #".$request->amount
+                "narration" => "Swap2Naira Transfer ₦".$request->amount
             );
 
             $response = Http::withHeaders([
@@ -70,6 +71,7 @@ class WalletService
             
             // if (true == true) {
             if ($res->data->is_approved == true) {
+                $this->updateWalletBalance($user_id, $request->amount, 'debit');
                 Transaction::create([
                     'user_id' => $user_id,
                     'request_id' => null,
@@ -81,12 +83,12 @@ class WalletService
                     'tnx_id' => $res->data->id
                 ]);
                 $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
-                Notification::Notify($user_id, "You just requested withdrawal of #".$request->amount.'.');
+                Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
                 Mail::to($wallet->user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
                 $admins = User::where('role', 'admin')->get();
                 foreach ($admins as $key => $admin) {
                     Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
-                    Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of #".$request->amount.'.');
+                    Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
                 }
                 // sleep(20);
                 // $response_retrieve = Http::withHeaders([
@@ -146,5 +148,55 @@ class WalletService
         }
 
         return false;
+    }
+
+    public function flwWebhook (Object $request)
+    {
+        $secretHash = config('services.flutterwave.secret_hash');
+        $signature = $request->header('verif-hash');
+        if (!$signature || ($signature !== $secretHash)) {
+            abort(401);
+        }
+        $payload = $request->all();
+
+        Log::info('Received webhook event: ', $payload);
+
+        if (isset($payload['event']) && $payload['event'] === 'transfer.completed') {
+            $data = $payload['data'];
+            $transactionId = $data['id'];
+            $accountNumber = $data['account_number'];
+            $bankName = $data['bank_name'];
+            $amount = $data['amount'];
+            $status = $data['status'];
+            $reference = $data['reference'];
+            $narration = $data['narration'];
+            $completeMessage = $data['complete_message'];
+
+            $transaction = Transaction::where('type', 'withdrawal')->where('reference', $reference)->where('status', 'pending')->where('flw_status', 'NEW')->first();
+            if ($transaction !== null) {
+                if ($status === 'FAILED') {
+                    $transaction->update([
+                        'status' => 'declined',
+                        'flw_status' => $status,
+                    ]);
+                    $this->updateWalletBalance($transaction->user_id, $amount, 'credit');
+                    Log::error("Transaction failed: $completeMessage");
+                } elseif ($status === 'SUCCESSFUL') {
+                    $transaction->update([
+                        'status' => 'confirmed',
+                        'flw_status' => $status,
+                    ]);
+
+                    Log::info("Transaction successful: $reference");
+
+                } else {
+                    Log::warning("Transaction status unknown: $status");
+                    abort(401);
+                }
+                return response(200);
+            }  
+            abort(401);
+        }
+        abort(401);
     }
 }

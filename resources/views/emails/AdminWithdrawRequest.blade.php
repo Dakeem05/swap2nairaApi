@@ -53,7 +53,7 @@
         </div>
         <h2>Hello Admin,</h2>
         <p class="message-text">
-            We would like to inform you that <strong>{{ $name }}</strong> has made a withdrawal request for the amount of <strong>{{ $amount }}</strong>.
+            We would like to inform you that <strong>{{ $name }}</strong> has made a withdrawal request for the amount of <strong>₦{{ $amount }}</strong>.
         </p>
         <p class="message-text">
             Please note this payment is already in transaction and both you and the user would be notified when successful.

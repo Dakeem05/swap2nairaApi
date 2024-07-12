@@ -62,8 +62,8 @@
         <p class="message-text">
             Number of Cards: <strong>{{ $number }}</strong><br>
             Card Type: <strong>{{ $type }}</strong><br>
-            Rate per Card: <strong>{{ $rate }}</strong><br>
-            Total Amount: <strong>{{ $sum }}</strong>
+            Rate per Card: <strong>₦{{ $rate }}</strong><br>
+            Total Amount: <strong>₦{{ $sum }}</strong>
         </p>
         <p class="message-text">
             Please verify this request and take the necessary actions to credit the user's wallet.

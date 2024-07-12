@@ -40,4 +40,10 @@ class WalletController extends Controller
         }
         return $this->errorResponse('Error processing request!!');
     }
+
+    public function flwWebhook (Request $request)
+    {
+        // $_data = (Object $request;
+        $res = $this->wallet_service->flwWebhook((Object) $request);
+    }
 }

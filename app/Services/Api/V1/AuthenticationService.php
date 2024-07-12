@@ -11,9 +11,7 @@ use App\Services\Api\V1\WalletService;
 use App\Traits\Api\V1\ApiResponseTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class AuthenticationService
 {

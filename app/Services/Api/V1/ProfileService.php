@@ -2,22 +2,14 @@
 
 namespace App\Services\Api\V1;
 
-use App\Mail\UserForgotPassword;
-use App\Mail\UserVerifyEmail;
 use App\Models\Notification;
-use App\Models\PasswordResetToken;
 use App\Models\Request;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Services\Api\V1\WalletService;
 use App\Traits\Api\V1\ApiResponseTrait;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class ProfileService
 {

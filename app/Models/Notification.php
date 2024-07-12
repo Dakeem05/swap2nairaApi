@@ -24,6 +24,12 @@ class Notification extends Model
         return Carbon::parse($value)->diffForHumans();
     }
 
+    protected $hidden = [
+        'deleted_at',
+        'updated_at',
+        'user_id'
+    ];
+
     public static function Notify ($id, $message) {
 		$notify = Notification::create([
             'user_id' => $id,

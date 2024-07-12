@@ -54,10 +54,10 @@
         </div>
         <h2>Hello, {{ $name }}!</h2>
         <p class="message-text">
-            We are pleased to inform you that your payment of <strong>{{ $amount }}</strong> has been recorded and is currently being processed.
+            We are pleased to inform you that your payment of <strong>₦{{ $amount }}</strong> has been recorded and is currently being processed.
         </p>
         <p class="message-text">
-            Your current wallet balance is still <strong>{{ $balance }}</strong>.
+            Your current wallet balance is <strong>₦{{ $balance }}</strong>.
         </p>
         <p class="message-text">
             If you have any questions or need further assistance, please feel free to contact our support team.

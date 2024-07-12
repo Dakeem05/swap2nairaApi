@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    'flutterwave' => [
+        'secret_hash' => env('FLW_SECRET_HASH')
+    ]
 ];
