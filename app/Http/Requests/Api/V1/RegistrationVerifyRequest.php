@@ -25,7 +25,7 @@ class RegistrationVerifyRequest extends FormRequest
     {
         return [
             'otp' => ['required', 'digits:6',],
-            'email' => ['required', 'string', 'email',],
+            'email' => ['required', 'string', 'email', 'exists:users,email'],
         ];
     }
 
