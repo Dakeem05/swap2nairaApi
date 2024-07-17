@@ -66,7 +66,7 @@
                 Swap<span class="highlight">2Naira</span>
             </h1>
         </div>
-        <h2>Hello, {{ $name }}!</h2>
+        <h2>Hello, {{ Str::ucfirst($name) }}!</h2>
         <p class="otp-text">
             Verify your email using the following OTP code:
         </p>

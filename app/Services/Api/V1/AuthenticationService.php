@@ -29,7 +29,7 @@ class AuthenticationService
         
         $otp = PasswordResetToken::GenerateOtp($user->email);
         
-        Mail::to($user->email)->send(new UserVerifyEmail($user->email, $user->name, $otp));
+        Mail::to($user->email)->send(new UserVerifyEmail($user->email, $user->username, $otp));
         
         return $user;
     }
@@ -40,7 +40,7 @@ class AuthenticationService
         
         if ($user !== null){
             $otp = PasswordResetToken::GenerateOtp($user->email);
-            Mail::to($user->email)->send(new UserVerifyEmail($user->email, $user->name, $otp));
+            Mail::to($user->email)->send(new UserVerifyEmail($user->email, $user->username, $otp));
             return true;
         } else {
             return false;
@@ -78,7 +78,7 @@ class AuthenticationService
         if ($user !== null){
             $otp = PasswordResetToken::GenerateOtp($user->email);
             Notification::Notify($user->id, "You have just requested for a password reset.");
-            Mail::to($user->email)->send(new UserForgotPassword($user->email, $user->name, $otp));
+            Mail::to($user->email)->send(new UserForgotPassword($user->email, $user->username, $otp));
             return true;
         } else {
             return false;
