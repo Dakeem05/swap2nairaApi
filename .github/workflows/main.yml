@@ -33,7 +33,3 @@ jobs:
           server: ${{secrets.FTP_SERVER}}
           username: ${{secrets.FTP_USERNAME}}
           password: ${{secrets.FTP_PASSWORD}}
-      - name: Migrate Database
-        run: php artisan migrate
-      - name: Serve the app
-        run: php artisan serve
