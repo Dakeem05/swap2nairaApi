@@ -116,7 +116,7 @@ class AuthenticationController extends Controller
 
     public function login (LoginRequest $request)
     {
-        $credentials = $request->only(['username', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
         $token = Auth::attempt($credentials);
 
