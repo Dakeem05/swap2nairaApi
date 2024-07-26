@@ -57,9 +57,9 @@ class AuthenticationService
                 $user->update(['email_verified_at' => Carbon::now()]);
                 $instance->delete();
                 Notification::Notify($user->id, "Welcome to swap2naira.com, your account has been successfully verified.");
-                $admins = User::where('role', 'admin')->select('id')->get();
+                $admins = User::where('role', 'admin')->get();
                 foreach ($admins as $key => $admin) {
-                    Notification::Notify($admin, "A new user has just registered on swap2naira.com");
+                    Notification::Notify($admin->id, "A new user has just registered on swap2naira.com");
                 }
 
                 return true;
