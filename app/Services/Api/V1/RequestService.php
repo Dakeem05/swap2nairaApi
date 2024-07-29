@@ -25,7 +25,8 @@ class RequestService
     public function getBrands ()
     {
         $brands = Card::select('brand')->select('image')->get();
-        $res = [];
+
+        $res = ['brand' => []];
 
         foreach ($brands as $key => $brand) {
             if (!in_array($brand->brand, $res['brand'])) {
@@ -33,6 +34,7 @@ class RequestService
                     'brand' => $brand->brand,
                     'image' => $brand->image
                 ];
+                $res['brand'][] = $brand->brand;  // Add brand to the array to avoid duplicates
                 $res[] = $arr;
             }
         }
