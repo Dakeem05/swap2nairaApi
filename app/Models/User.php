@@ -72,6 +72,6 @@ class User extends Authenticatable implements JWTSubject
     }
     public static function url ()
     {
-        return 'http://127.0.0.1:8150';
+        return 'https://api.swap2naira.com';
     }
 }
