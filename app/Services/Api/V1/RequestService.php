@@ -47,7 +47,7 @@ class RequestService
     public function getCategories ($request)
     {
         if (!isset($request->category)) {
-            $types = Card::where('brand', $request->brand)->select('type', 'rate', 'category')->get();
+            $types = Card::where('brand', $request->brand)->get();
             return $types;
         }
         $types = Card::where('brand', $request->brand)->where('category', $request->category)->select('type', 'rate', 'category')->get();
