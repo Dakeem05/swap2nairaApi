@@ -50,7 +50,7 @@ class RequestService
             $types = Card::where('brand', $request->brand)->where('active', true)->get();
             return $types;
         }
-        $types = Card::where('brand', $request->brand)->where('category', $request->category)->select('type', 'rate', 'category')->get();
+        $types = Card::where('brand', $request->brand)->where('category', $request->category)->where('active', true)->get();
         return $types;
     }
 
