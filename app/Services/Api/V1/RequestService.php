@@ -24,10 +24,10 @@ class RequestService
 
     public function getBrands ()
     {
-        $brands = Card::all();
+        $brands = Card::select('image', 'brand')->get();
 
-        $res = []; // To store the final result
-        $trackedBrands = []; // To track unique brands
+        $res = [];
+        $trackedBrands = [];
         
         foreach ($brands as $key => $brand) {
             if (!in_array($brand->brand, $trackedBrands)) {
@@ -35,8 +35,8 @@ class RequestService
                     'brand' => $brand->brand,
                     'image' => $brand->image
                 ];
-                $trackedBrands[] = $brand->brand; // Track the brand to avoid duplicates
-                $res[] = $arr; // Add the brand and image to the result
+                $trackedBrands[] = $brand->brand;
+                $res[] = $arr;
             }
         }
         
