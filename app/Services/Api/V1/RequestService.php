@@ -24,7 +24,7 @@ class RequestService
 
     public function getBrands ()
     {
-        $brands = Card::select('brand')->select('image')->get();
+        $brands = Card::all();
 
         $res = []; // To store the final result
         $trackedBrands = []; // To track unique brands
