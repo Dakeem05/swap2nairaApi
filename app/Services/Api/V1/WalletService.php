@@ -83,9 +83,10 @@ class WalletService
                     'type' => 'withdrawal',
                     'tnx_id' => $res->data->id
                 ]);
+                $user = User::find($user_id);
                 $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
                 Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
-                Mail::to($wallet->user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
+                Mail::to($user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
                 $admins = User::where('role', 'admin')->get();
                 foreach ($admins as $key => $admin) {
                     Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
