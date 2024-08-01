@@ -46,7 +46,7 @@ class NotifyWithdrawals extends Command
                     $admins = User::where('role', 'admin')->get();
                     foreach ($admins as $key => $admin) {
                         Mail::to($admin->email)->send(new AdminWithdrawRequestPayment($name, $transaction->amount));
-                        Notification::Notify($admin->id, "$name's requested withdrawal of ₦ .$transaction->amount has been paid.");
+                        Notification::Notify($admin->id, "$name's request withdrawal of ₦$transaction->amount has been paid.");
                     }
                     $transaction->update([
                         'sent_mail' => true
@@ -60,7 +60,7 @@ class NotifyWithdrawals extends Command
                 $admins = User::where('role', 'admin')->get();
                 foreach ($admins as $key => $admin) {
                     Mail::to($admin->email)->send(new AdminWithdrawFailed($name, $transaction->amount));
-                    Notification::Notify($admin->id, "$name's requested withdrawal of ₦ .$transaction->amount has failed.");
+                    Notification::Notify($admin->id, "$name's request withdrawal of ₦$transaction->amount has failed.");
                 }
                 $transaction->update([
                     'sent_mail' => true

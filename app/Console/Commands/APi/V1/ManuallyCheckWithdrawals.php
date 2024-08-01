@@ -59,7 +59,7 @@ class ManuallyCheckWithdrawals extends Command
                         $admins = User::where('role', 'admin')->get();
                         foreach ($admins as $key => $admin) {
                             Mail::to($admin->email)->send(new AdminWithdrawRequestPayment($name, $transaction->amount));
-                            Notification::Notify($admin->id, "$name's requested withdrawal of ₦ .$transaction->amount has been paid.");
+                            Notification::Notify($admin->id, "$name's request withdrawal of ₦$transaction->amount has been paid.");
                         }
                         $this->info('Notifications sent successfully.');
                     } else if ($res->data->status === "FAILED" ){
@@ -76,7 +76,7 @@ class ManuallyCheckWithdrawals extends Command
                         $admins = User::where('role', 'admin')->get();
                         foreach ($admins as $key => $admin) {
                             Mail::to($admin->email)->send(new AdminWithdrawFailed($name, $transaction->amount));
-                            Notification::Notify($admin->id, "$name's requested withdrawal of ₦ .$transaction->amount has failed.");
+                            Notification::Notify($admin->id, "$name's request withdrawal of ₦$transaction->amount has failed.");
                         }
                         $this->info('Notifications sent successfully.');
                     }
