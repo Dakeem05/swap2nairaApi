@@ -216,7 +216,7 @@ class WalletService
 
     public function getTransaction (String $uuid, Int $user_id)
     {
-        $transactions = Transaction::where('user_id', $user_id)->findByUuid($uuid);
+        $transactions = Transaction::where('user_id', $user_id)->where('uuid', $uuid)->first();
         return $transactions;
     }
 }
