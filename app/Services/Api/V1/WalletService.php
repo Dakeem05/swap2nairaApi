@@ -201,19 +201,19 @@ class WalletService
         abort(401);
     }
 
-    public function getTransactions (Integer $user_id)
+    public function getTransactions (Int $user_id)
     {
         $transactions = Transaction::where('user_id', $user_id)->latest()->paginate();
         return $transactions;
     }
 
-    public function getPendingTransactions (Integer $user_id)
+    public function getPendingTransactions (Int $user_id)
     {
         $transactions = Transaction::where('user_id', $user_id)->where('status', 'pending')->paginate();
         return $transactions;
     }
 
-    public function getTransaction (String $uuid, Integer $user_id)
+    public function getTransaction (String $uuid, Int $user_id)
     {
         $transactions = Transaction::where('user_id', $user_id)->findByUuid($uuid);
         return $transactions;
