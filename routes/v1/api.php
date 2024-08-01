@@ -58,6 +58,12 @@ Route::middleware('api')->group(function () {
                 Route::post('withdraw', 'withdraw');
             });
 
+            Route::prefix('transaction')->controller(WalletController::class)->group(function () {
+                Route::get('', 'getTransactions');                    
+                Route::get('/pending', 'getPendingTransactions');                    
+                Route::get('/{uuid}', 'getTransaction');    
+            });
+
             Route::resource('notification', NotificationController::class);
             Route::get('notification/read/{id}', [NotificationController::class, 'read']);
             

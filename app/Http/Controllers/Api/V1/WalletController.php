@@ -46,4 +46,23 @@ class WalletController extends Controller
         // $_data = (Object $request;
         $res = $this->wallet_service->flwWebhook((Object) $request);
     }
+
+    public function getTransactions()
+    {
+        $res = $this->wallet_service->getTransactions(auth()->user()->id);
+        return $this->successResponse($res);
+    }
+    public function getPendingTransactions()
+    {
+        $res = $this->wallet_service->getPendingTransactions(auth()->user()->id);
+        return $this->successResponse($res);
+    }
+    public function getTransaction(string $uuid)
+    {
+        $res = $this->wallet_service->getTransaction($uuid, auth()->user()->id);
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->errorResponse('Transaction not found.', null, 404);
+    }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Ramsey\Uuid\Type\Integer;
 
 class WalletService
 {
@@ -198,5 +199,23 @@ class WalletService
             abort(401);
         }
         abort(401);
+    }
+
+    public function getTransactions (Integer $user_id)
+    {
+        $transactions = Transaction::where('user_id', $user_id)->latest()->paginate();
+        return $transactions;
+    }
+
+    public function getPendingTransactions (Integer $user_id)
+    {
+        $transactions = Transaction::where('user_id', $user_id)->where('status', 'pending')->paginate();
+        return $transactions;
+    }
+
+    public function getTransaction (String $uuid, Integer $user_id)
+    {
+        $transactions = Transaction::where('user_id', $user_id)->findByUuid($uuid);
+        return $transactions;
     }
 }

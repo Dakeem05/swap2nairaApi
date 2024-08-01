@@ -14,7 +14,6 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('app:nullify-old-otp')->everyMinute();
-        $schedule->command('app:restart-daily-views')->dailyAt('12:00');
     }
 
     /**
