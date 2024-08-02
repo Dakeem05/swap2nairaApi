@@ -45,11 +45,13 @@ class RequestController extends Controller
         $res = $this->request_service->getRequests();
         return $this->successResponse($res);
     }
+
     public function getPendingRequests()
     {
         $res = $this->request_service->getPendingRequests();
         return $this->successResponse($res);
     }
+
     public function getRequest(string $uuid)
     {
         $res = $this->request_service->getRequest($uuid);
@@ -58,6 +60,28 @@ class RequestController extends Controller
         }
         return $this->errorResponse('Request not found.', null, 404);
     }
+
+    public function getUserRequests()
+    {
+        $res = $this->request_service->getUserRequests(auth()->user()->id);
+        return $this->successResponse($res);
+    }
+    
+    public function getUserPendingRequests()
+    {
+        $res = $this->request_service->getUserPendingRequests(auth()->user()->id);
+        return $this->successResponse($res);
+    }
+
+    public function getUserRequest(string $uuid)
+    {
+        $res = $this->request_service->getUserRequest($uuid, auth()->user()->id);
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->errorResponse('Request not found.', null, 404);
+    }
+
     public function confirmRequest(string $uuid, bool $action)
     {
         $res = $this->request_service->confirmRequest($uuid, $action);

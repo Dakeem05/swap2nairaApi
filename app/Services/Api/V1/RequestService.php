@@ -131,6 +131,23 @@ class RequestService
         $requests = Request::findByUuid($uuid);
         return $requests;
     }
+    public function getUserRequests (Int $user_id)
+    {
+        $requests = Request::where('user_id', $user_id)->latest()->paginate();
+        return $requests;
+    }
+
+    public function getUserPendingRequests (Int $user_id)
+    {
+        $requests = Request::where('user_id', $user_id)->where('status', 'pending')->paginate();
+        return $requests;
+    }
+
+    public function getUserRequest (String $uuid, Int $user_id)
+    {
+        $requests = Request::where('user_id', $user_id)->where('uuid', $uuid)->first();
+        return $requests;
+    }
 
     public function confirmRequest (String $uuid, bool $action)
     {

@@ -64,6 +64,12 @@ Route::middleware('api')->group(function () {
                 Route::get('/{uuid}', 'getTransaction');    
             });
 
+            Route::prefix('request')->controller(RequestController::class)->group(function () {
+                Route::get('', 'getUserRequests');      
+                Route::get('pending', 'getUserPendingRequests');
+                Route::get('/{uuid}', 'getUserRequest');                
+            });
+
             Route::resource('notification', NotificationController::class);
             Route::get('notification/read/{id}', [NotificationController::class, 'read']);
             

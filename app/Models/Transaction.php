@@ -17,7 +17,6 @@ class Transaction extends Model
         'id',
         'deleted_at',
         'updated_at',
-        'created_at',
         'user_id',
         'request_id'
     ];
