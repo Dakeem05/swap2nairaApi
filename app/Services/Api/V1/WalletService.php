@@ -204,7 +204,7 @@ class WalletService
 
     public function getTransactions (Int $user_id)
     {
-        $transactions = Transaction::where('user_id', $user_id)->latest()->paginate();
+        $transactions = Transaction::where('user_id', $user_id)->latest()->paginate(9);
         return $transactions;
     }
 
