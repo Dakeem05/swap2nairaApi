@@ -32,7 +32,7 @@ class User extends Authenticatable implements JWTSubject
         'id',
         'password',
         'remember_token',
-        'role',
+        // 'role',
         'email_verified_at',
         'created_at',
         'updated_at',

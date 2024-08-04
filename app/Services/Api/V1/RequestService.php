@@ -133,7 +133,7 @@ class RequestService
     }
     public function getUserRequests (Int $user_id)
     {
-        $requests = Request::where('user_id', $user_id)->latest()->paginate(5);
+        $requests = Request::where('user_id', $user_id)->latest()->paginate();
         return $requests;
     }
 
