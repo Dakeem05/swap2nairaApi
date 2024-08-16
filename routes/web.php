@@ -16,6 +16,8 @@ Route::get('/images/{image}', function ($image) {
         return response()->file($basePath . 'profileImages/'. $image);
     }  else if (File::exists($basePath . 'physicalCards/' . $image)) {
         return response()->file($basePath . 'physicalCards/'. $image);
+    }  else if (File::exists($basePath . 'rejectionImages/' . $image)) {
+        return response()->file($basePath . 'rejectionImages/'. $image);
     } else {
         return response('Not found', 404);
     }

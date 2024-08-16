@@ -38,10 +38,25 @@
             font-size: 18px;
             margin-bottom: 20px;
         }
+        .reason-text {
+            text-align: center;
+            font-size: 16px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
         .signature {
             text-align: right;
             margin-top: 20px;
             font-style: italic;
+        }
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -56,6 +71,17 @@
         <p class="message-text">
             We regret to inform you that your request to sell <strong>{{ $number }}</strong> <strong>{{ $type }}</strong> gift cards at a rate of <strong>{{ $rate }}</strong> each, totaling <strong>{{ $sum }}</strong>, has been rejected.
         </p>
+        <p class="reason-text">
+            Reason for rejection:
+        </p>
+        <p class="reason-text">
+            {{ $reason }}
+        </p>
+        @if($image)
+        <div class="image-container">
+            <img src="{{ $image }}" alt="Rejection Reason">
+        </div>
+        @endif
         <p class="message-text">
             If you have any questions or need further assistance, please feel free to contact our support team.
         </p>

@@ -104,4 +104,13 @@ class CardController extends Controller
         }
         return $this->serverErrorResponse('An error occurred.');
     }
+
+    public function toggleActiveState(string $id)
+    {
+        $res = $this->card_service->toggleActiveState($id);
+        if ($res) {
+            return $this->successResponse($res, 'Card active state changed successfully.');
+        }
+        return $this->serverErrorResponse('An error occurred.');
+    }
 }

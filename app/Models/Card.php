@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\CreateUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Card extends Model
@@ -22,4 +23,9 @@ class Card extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    public function requests ():HasMany
+    {
+        return $this->hasMany(Request::class, 'card_id', 'id');
+    }
 }

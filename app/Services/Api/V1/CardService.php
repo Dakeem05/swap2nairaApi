@@ -83,7 +83,18 @@ class CardService
             $card->forceDelete();
             return true;
         }
-        return true;
+        return false;
+    }
+
+    public function toggleActiveState (Int $id)
+    {
+        $card = Card::find($id);
+        if ($card !== null) {
+            $card->active = !$card->active;
+            $card->save();
+            return true;
+        }
+        return false;
     }
 }
 

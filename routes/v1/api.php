@@ -29,7 +29,7 @@ Route::middleware('api')->group(function () {
             Route::get('logout', 'logout');
         });
 
-        Route::middleware(['isVerified'])->group(function () {
+        Route::middleware(['isVerified', 'isBlocked'])->group(function () {
             Route::prefix('profile')->controller(ProfileController::class)->group(function () {
                 Route::get('banks', 'banks');
                 Route::post('resolve-account', 'resolveAccount');
@@ -76,16 +76,21 @@ Route::middleware('api')->group(function () {
             Route::group(['middleware' => 'isAdmin', 'prefix' => '/admin'], function () {
                 Route::resource('card', CardController::class);
                 Route::get('card-brands', [CardController::class, 'getGiftCardBrands']);
+                Route::get('/card-toggle/{id}', [CardController::class, 'toggleActiveState']);
                 Route::get('card-check/{brand}', [CardController::class, 'checkIfGiftCardExists']);
+
                 Route::prefix('request')->controller(RequestController::class)->group(function () {
                     Route::get('', 'getRequests');                    
                     Route::get('pending', 'getPendingRequests');                    
                     Route::get('/{uuid}', 'getRequest');                    
-                    Route::get('/{uuid}/{action}', 'confirmRequest');                    
+                    Route::post('/{uuid}/{action}', 'confirmRequest');                    
                 });
+
                 Route::controller(AdminController::class)->group(function () {
                     Route::get('users', 'getUsers');
                     Route::get('user/{uuid}', 'getUser');
+                    Route::get('verify-user/{uuid}', 'verifyUser');
+                    Route::get('block-user/{uuid}', 'blockUser');
                     Route::get('transactions', 'getTransactions');                    
                     Route::get('transaction/pending', 'getPendingTransactions');                    
                     Route::get('transaction/{uuid}', 'getTransaction');      

@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Api\V1\IsAdmin;
 use App\Http\Middleware\Api\V1\IsAuthenticated;
+use App\Http\Middleware\Api\V1\IsBlocked;
 use App\Http\Middleware\Api\V1\IsVerified;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -68,6 +69,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'isAdmin' => IsAdmin::class,
+        'isBlocked' => IsBlocked::class,
         'isVerified' => IsVerified::class,
         'isAuthenticated' => IsAuthenticated::class,
     ];

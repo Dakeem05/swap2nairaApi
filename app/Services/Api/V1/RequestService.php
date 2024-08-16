@@ -24,7 +24,7 @@ class RequestService
 
     public function getBrands ()
     {
-        $brands = Card::select('image', 'brand')->get();
+        $brands = Card::where('active', true)->select('image', 'brand')->get();
 
         $res = [];
         $trackedBrands = [];
@@ -116,40 +116,40 @@ class RequestService
 
     public function getRequests ()
     {
-        $requests = Request::latest()->paginate();
+        $requests = Request::with('card')->latest()->paginate();
         return $requests;
     }
 
     public function getPendingRequests ()
     {
-        $requests = Request::where('status', 'pending')->paginate();
+        $requests = Request::where('status', 'pending')->with('card')->paginate();
         return $requests;
     }
 
     public function getRequest (String $uuid)
     {
-        $requests = Request::findByUuid($uuid);
+        $requests = Request::with('card')->where('uuid', $uuid)->first();
         return $requests;
     }
     public function getUserRequests (Int $user_id)
     {
-        $requests = Request::where('user_id', $user_id)->latest()->paginate();
+        $requests = Request::where('user_id', $user_id)->with('card')->latest()->paginate();
         return $requests;
     }
 
     public function getUserPendingRequests (Int $user_id)
     {
-        $requests = Request::where('user_id', $user_id)->where('status', 'pending')->paginate();
+        $requests = Request::where('user_id', $user_id)->where('status', 'pending')->with('card')->paginate();
         return $requests;
     }
 
     public function getUserRequest (String $uuid, Int $user_id)
     {
-        $requests = Request::where('user_id', $user_id)->where('uuid', $uuid)->first();
+        $requests = Request::where('user_id', $user_id)->where('uuid', $uuid)->with('card')->first();
         return $requests;
     }
 
-    public function confirmRequest (String $uuid, bool $action)
+    public function confirmRequest (String $uuid, bool $action, Object $data)
     {
         $request = Request::where('status', 'pending')->where('uuid', $uuid)->first();
         if ($request !== null) {
@@ -181,21 +181,39 @@ class RequestService
 
                 return 'confirmed';
             }
-            $request->update([
-                'status' => 'declined'
-            ]);
-            $transaction->update([
-                'status' => 'declined'
-            ]);
-            Mail::to($user->email)->send(new UserSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum));
-            Notification::Notify($user_id, "Your gift card sell request of $request->number of $card->type at $card->rate each totaling $sum has been rejected.");
-    
-            $admins = User::where('role', 'admin')->get();
-            foreach ($admins as $key => $admin) {
-                Mail::to($admin->email)->send(new AdminSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum));
-                Notification::Notify($admin->id, "Gift card sell request of $request->number of $card->type at $card->rate each totaling $sum has been rejected.");
+
+            if (isset($data->reason)) {
+                if (isset($data->image)) {
+                    $image = '';
+
+                    $imagee = time().'.'.$data->image->getClientOriginalExtension();
+                    $destinationPath = public_path().'/uploads/images/rejectionImages/';
+                    $data->image->move($destinationPath, $imagee);
+                    $path = User::url().'/images/'.$imagee;
+                    $image = $path;                 
+                    $request->update([
+                        'rejection_image' => $image,
+                    ]);
+                }
+
+                $request->update([
+                    'rejection_reason' => $data->reason,
+                    'status' => 'declined'
+                ]);
+                $transaction->update([
+                    'status' => 'declined'
+                ]);
+                Mail::to($user->email)->send(new UserSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum, $data->reason, $image));
+                Notification::Notify($user_id, "Your gift card sell request of $request->number of $card->type at $card->rate each totaling $sum has been rejected. Check the email sent to you with the reason of the rejection.");
+        
+                $admins = User::where('role', 'admin')->get();
+                foreach ($admins as $key => $admin) {
+                    Mail::to($admin->email)->send(new AdminSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum, $data->reason, $image));
+                    Notification::Notify($admin->id, "Gift card sell request of $request->number of $card->type at $card->rate each totaling $sum has been rejected. The reason for the rejection has been emailed to the user.");
+                }
+                return 'rejected';
             }
-            return 'rejected';
+            return 'reason';
         }
         return 'treated';
     }

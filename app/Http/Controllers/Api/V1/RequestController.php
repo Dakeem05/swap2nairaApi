@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\GetCategoriesRequest;
 use App\Http\Requests\Api\V1\RequestCreationRequest;
+use App\Http\Requests\Api\V1\RequestRejectionReasonRequest;
 use App\Services\Api\V1\RequestService;
 use App\Traits\Api\V1\ApiResponseTrait;
 use Illuminate\Http\Request;
@@ -82,12 +83,17 @@ class RequestController extends Controller
         return $this->errorResponse('Request not found.', null, 404);
     }
 
-    public function confirmRequest(string $uuid, bool $action)
+    public function confirmRequest(RequestRejectionReasonRequest $request, string $uuid, bool $action)
     {
-        $res = $this->request_service->confirmRequest($uuid, $action);
+        if ($action == false) {
+            $res = $this->request_service->confirmRequest($uuid, $action, (Object) $request->validated());
+        }
+        $res = $this->request_service->confirmRequest($uuid, $action, (Object) null);
         if ($res === 'treated') {
             return $this->errorResponse('Request has already been accepted or rejected');
             // return $this->successResponse('Request confirmed successfully.');
+        } else if ($res === 'reason') {
+            return $this->successResponse('Input rejection reason (compulsory) or image.');
         } else if ($res === 'rejected') {
             return $this->successResponse('Request declined successfully.');
         } else if ($res === 'confirmed') {

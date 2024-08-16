@@ -33,8 +33,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
         // 'role',
-        'email_verified_at',
-        'created_at',
+        // 'email_verified_at',
+        // 'created_at',
         'updated_at',
         'deleted_at'
     ];
@@ -49,6 +49,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_blocked' => 'boolean',
         ];
     }
 
@@ -72,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
     }
     public static function url ()
     {
+        // return 'http://127.0.0.1:8150';
         return 'https://api.swap2naira.com';
     }
 }
