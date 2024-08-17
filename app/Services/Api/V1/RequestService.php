@@ -183,8 +183,8 @@ class RequestService
             }
 
             if (isset($data->reason)) {
+                $image = '';
                 if (isset($data->image)) {
-                    $image = '';
 
                     $imagee = time().'.'.$data->image->getClientOriginalExtension();
                     $destinationPath = public_path().'/uploads/images/rejectionImages/';
@@ -203,12 +203,12 @@ class RequestService
                 $transaction->update([
                     'status' => 'declined'
                 ]);
-                Mail::to($user->email)->send(new UserSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum, $data->reason, $image));
+                Mail::to($user->email)->send(new UserSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum, $data->reason, $image == "" ? null : $image));
                 Notification::Notify($user_id, "Your gift card sell request of $request->number of $card->type at $card->rate each totaling $sum has been rejected. Check the email sent to you with the reason of the rejection.");
         
                 $admins = User::where('role', 'admin')->get();
                 foreach ($admins as $key => $admin) {
-                    Mail::to($admin->email)->send(new AdminSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum, $data->reason, $image));
+                    Mail::to($admin->email)->send(new AdminSellRequestRejection($name, $request->number, $card->type, $card->rate, $sum));
                     Notification::Notify($admin->id, "Gift card sell request of $request->number of $card->type at $card->rate each totaling $sum has been rejected. The reason for the rejection has been emailed to the user.");
                 }
                 return 'rejected';

@@ -57,7 +57,7 @@
             This is to notify you that the request from user <strong>{{ $name }}</strong> to sell <strong>{{ $number }}</strong> <strong>{{ $type }}</strong> gift cards at a rate of <strong>{{ $rate }}</strong> each, totaling <strong>{{ $sum }}</strong>, has been rejected.
         </p>
         <p class="message-text">
-            The user as been emailed with the reason for te rejection. Provide any necessary support or further instructions.
+            The user as been emailed with the reason for the rejection. Provide any necessary support or further instructions.
         </p>
         <p class="signature">
             Best Regards,<br>
