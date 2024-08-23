@@ -143,6 +143,59 @@ class RequestService
         return $requests;
     }
 
+    public function search (Int $user_id, object $request)
+    {
+        if (strlen($request->input) == 12) {
+            $requests = [];
+            $request_item = Request::where('user_id', $user_id)->where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+            $requests[] = $request_item;
+            if ($request_item == null){
+                return null;
+            }
+    
+            return $requests;
+        } else {
+            $requests = [];
+            $cards = Card::where('type','like','%'.$request->input.'%')->latest()->get();
+
+            if ($cards == null){
+                return null;
+            }
+            foreach ($cards as $key => $card) {
+                $requests[] = Request::where('user_id', $user_id)->where('card_id',$card->id)->first();
+            }
+
+            return $requests;
+        }
+        
+    }
+    public function searchAdmin (object $request)
+    {
+        if (strlen($request->input) == 12) {
+            $requests = [];
+            $request_item = Request::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+            $requests[] = $request_item;
+            if ($request_item == null){
+                return null;
+            }
+    
+            return $requests;
+        } else {
+            $requests = [];
+            $cards = Card::where('type','like','%'.$request->input.'%')->latest()->get();
+
+            if ($cards == null){
+                return null;
+            }
+            foreach ($cards as $key => $card) {
+                $requests[] = Request::where('card_id',$card->id)->first();
+            }
+
+            return $requests;
+        }
+        
+    }
+
     public function getUserRequest (String $uuid, Int $user_id)
     {
         $requests = Request::where('user_id', $user_id)->where('uuid', $uuid)->with('card')->first();

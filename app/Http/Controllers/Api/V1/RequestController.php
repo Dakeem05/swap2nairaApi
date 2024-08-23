@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\GetCategoriesRequest;
 use App\Http\Requests\Api\V1\RequestCreationRequest;
 use App\Http\Requests\Api\V1\RequestRejectionReasonRequest;
+use App\Http\Requests\Api\V1\SearchRequest;
 use App\Services\Api\V1\RequestService;
 use App\Traits\Api\V1\ApiResponseTrait;
-use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
@@ -62,10 +62,30 @@ class RequestController extends Controller
         return $this->errorResponse('Request not found.', null, 404);
     }
 
+    
+
     public function getUserRequests()
     {
         $res = $this->request_service->getUserRequests(auth()->user()->id);
         return $this->successResponse($res);
+    }
+
+    public function search(SearchRequest $request) 
+    {
+        $res = $this->request_service->search(auth()->user()->id, (Object) $request->validated());
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->notFoundResponse("Request not found!!");
+    }
+
+    public function searchAdmin(SearchRequest $request) 
+    {
+        $res = $this->request_service->searchAdmin((Object) $request->validated());
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->notFoundResponse("Request not found!!");
     }
     
     public function getUserPendingRequests()

@@ -219,4 +219,17 @@ class WalletService
         $transactions = Transaction::where('user_id', $user_id)->where('uuid', $uuid)->first();
         return $transactions;
     }
+
+    public function search (Int $user_id, object $request)
+    {
+        $transactions = Transaction::where('user_id', $user_id)->where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+
+        if ($transactions == null){
+            return null;
+        }
+
+        return $transactions;
+        
+    }
+    
 }

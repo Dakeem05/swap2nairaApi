@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\SearchRequest;
+use App\Http\Requests\Api\V1\UpdateUserBalanceRequest;
 use App\Services\Api\V1\AdminService;
 use App\Services\Api\V1\AuthenticationService;
 use App\Traits\Api\V1\ApiResponseTrait;
@@ -21,6 +23,37 @@ class AdminController extends Controller
         $res = $this->admin_service->getUsers();
         return $this->successResponse($res);
     }
+    
+    public function updateUserBalance(UpdateUserBalanceRequest $request) 
+    {
+        $res = $this->admin_service->updateUserBalance((Object) $request->validated());
+        if ($res === true) {
+            return $this->successResponse('User balance updated successfully.');
+        } else if ($res === false) {
+            return $this->errorResponse('An error occurred');
+        } else if ($res === 'unverified') {
+            return $this->errorResponse('This user is not verified yet.');
+        }
+        return $this->notFoundResponse("User not found!!");
+    }
+
+    public function searchForUser(SearchRequest $request) 
+    {
+        $res = $this->admin_service->searchForUser((Object) $request->validated());
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->notFoundResponse("User not found!!");
+    }
+
+    public function userTransactions(String $uuid) 
+    {
+        $res = $this->admin_service->userTransactions($uuid);
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->notFoundResponse("User not found!!");
+    }
 
     public function verifyUser(string $uuid, AuthenticationService $auth_service)
     {
@@ -30,7 +63,7 @@ class AdminController extends Controller
         } else if ($res === false) {
             return $this->errorResponse('User is already verified');
         }
-        return $this->notFoundResponse("User not found");
+        return $this->notFoundResponse("User not found!!");
     }
 
     public function blockUser(string $uuid)
@@ -73,5 +106,14 @@ class AdminController extends Controller
             return $this->successResponse($res);
         }
         return $this->errorResponse('Transaction not found.', null, 404);
+    }
+
+    public function searchAdmin(SearchRequest $request) 
+    {
+        $res = $this->admin_service->searchAdmin((Object) $request->validated());
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->notFoundResponse("Transaction not found!!");
     }
 }

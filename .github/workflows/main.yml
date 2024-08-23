@@ -1,4 +1,4 @@
-name: Deploy Laravel Project To DecodingTheFuture
+name: Deploy Laravel Project To Swap2naira
 on:
   push:
     branches:

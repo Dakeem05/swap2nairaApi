@@ -48,6 +48,7 @@ Route::middleware('api')->group(function () {
 
             Route::prefix('request')->controller(RequestController::class)->group(function () {
                 Route::get('get-brands', 'getBrands');
+                Route::post('search', 'search');
                 Route::post('get-categories', 'getCategories');
                 Route::post('', 'store');
 
@@ -60,7 +61,8 @@ Route::middleware('api')->group(function () {
 
             Route::prefix('transaction')->controller(WalletController::class)->group(function () {
                 Route::get('', 'getTransactions');                    
-                Route::get('/pending', 'getPendingTransactions');                    
+                Route::get('/pending', 'getPendingTransactions');  
+                Route::post('search', 'search');                  
                 Route::get('/{uuid}', 'getTransaction');    
             });
 
@@ -82,18 +84,23 @@ Route::middleware('api')->group(function () {
                 Route::prefix('request')->controller(RequestController::class)->group(function () {
                     Route::get('', 'getRequests');                    
                     Route::get('pending', 'getPendingRequests');                    
-                    Route::get('/{uuid}', 'getRequest');                    
+                    Route::get('/{uuid}', 'getRequest');         
+                    Route::post('search', 'searchAdmin');
                     Route::post('/{uuid}/{action}', 'confirmRequest');                    
                 });
 
                 Route::controller(AdminController::class)->group(function () {
                     Route::get('users', 'getUsers');
+                    Route::post('update-balance', 'updateUserBalance');
                     Route::get('user/{uuid}', 'getUser');
+                    Route::post('search-users', 'searchForUser');
                     Route::get('verify-user/{uuid}', 'verifyUser');
                     Route::get('block-user/{uuid}', 'blockUser');
+                    Route::get('user-transactions/{uuid}', 'userTransactions');
                     Route::get('transactions', 'getTransactions');                    
                     Route::get('transaction/pending', 'getPendingTransactions');                    
-                    Route::get('transaction/{uuid}', 'getTransaction');      
+                    Route::get('transaction/{uuid}', 'getTransaction');   
+                    Route::post('transaction/search', 'searchAdmin');   
                 }); 
             });
         });

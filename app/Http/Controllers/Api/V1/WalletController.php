@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\SearchRequest;
 use App\Http\Requests\Api\V1\WithdrawalRequest;
 use App\Services\Api\V1\WalletService;
 use App\Traits\Api\V1\ApiResponseTrait;
@@ -64,5 +65,14 @@ class WalletController extends Controller
             return $this->successResponse($res);
         }
         return $this->errorResponse('Transaction not found.', null, 404);
+    }
+
+    public function search(SearchRequest $request) 
+    {
+        $res = $this->wallet_service->search(auth()->user()->id, (Object) $request->validated());
+        if ($res !== null) {
+            return $this->successResponse($res);
+        }
+        return $this->notFoundResponse("Transaction not found!!");
     }
 }

@@ -19,13 +19,58 @@ class AdminService
 
     public function getUsers()
     {
-        $users = User::latest()->paginate();
+        $users = User::with(['wallet' => function ($query) {
+            $query->select('id', 'user_id', 'main_balance');
+        }])->latest()->paginate();
         $count = User::count();
 
         return [
             'total_users' => $count,
             'users' => $users,
         ];
+    }
+    
+    public function updateUserBalance (object $request)
+    {
+        $user = User::findByUuid($request->uuid);
+
+        if ($user == null){
+            return null;
+        }
+
+        $wallet = Wallet::where('user_id', $user->id)->first();
+
+        if ($wallet == null){
+            return 'unverified';
+        }
+
+        $wallet->main_balance = $request->balance;
+        $wallet->save();
+
+        return true;
+    }
+
+    public function userTransactions (string $uuid)
+    {
+        $user = User::findByUuid($uuid);
+
+        if ($user == null){
+            return null;
+        }
+        
+        $transactions = Transaction::where('user_id', $user->id)->latest()->paginate();
+        return $transactions;
+    }
+
+    public function searchForUser (object $request)
+    {
+        $user = User::where('username','like','%'.$request->input.'%')->orWhere('email','like','%'.$request->input.'%')->orWhere('phone','like','%'.$request->input.'%')->latest()->paginate();
+
+        if ($user == null){
+            return null;
+        }
+
+        return $user;
     }
 
     public function verifyUser(String $uuid, $auth_service)
@@ -49,6 +94,7 @@ class AdminService
 
         return false;
     }
+
     public function blockUser(String $uuid)
     {
         $user = User::findByUuid($uuid);
@@ -93,6 +139,18 @@ class AdminService
     {
         $transactions = Transaction::findByUuid($uuid);
         return $transactions;
+    }
+
+    public function searchAdmin (object $request)
+    {
+        $transactions= Transaction::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+        
+        if ($transactions == null){
+            return null;
+        }
+
+        return $transactions;
+        
     }
 }
 
