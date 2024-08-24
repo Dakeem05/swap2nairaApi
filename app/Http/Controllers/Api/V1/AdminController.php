@@ -23,6 +23,12 @@ class AdminController extends Controller
         $res = $this->admin_service->getUsers();
         return $this->successResponse($res);
     }
+
+    public function dashboard()
+    {
+        $res = $this->admin_service->dashboard();
+        return $this->successResponse($res);
+    }
     
     public function updateUserBalance(UpdateUserBalanceRequest $request) 
     {

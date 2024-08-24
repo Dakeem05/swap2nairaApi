@@ -15,6 +15,7 @@ use App\Models\Request;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -146,10 +147,8 @@ class RequestService
     public function search (Int $user_id, object $request)
     {
         if (strlen($request->input) == 12) {
-            $requests = [];
-            $request_item = Request::where('user_id', $user_id)->where('uuid','like','%'.$request->input.'%')->latest()->paginate();
-            $requests[] = $request_item;
-            if ($request_item == null){
+            $requests = Request::where('user_id', $user_id)->where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+            if ($requests == null){
                 return null;
             }
     
@@ -165,17 +164,30 @@ class RequestService
                 $requests[] = Request::where('user_id', $user_id)->where('card_id',$card->id)->first();
             }
 
-            return $requests;
+            $perPage = 15; 
+            $currentPage = request()->get('page', 1);
+            $offset = ($currentPage - 1) * $perPage;
+        
+            $items = array_slice($requests, $offset, $perPage);
+            
+            $path = url('/api/v1/requests/search'); 
+            
+            $paginator = new LengthAwarePaginator($items, count($requests), $perPage, $currentPage, [
+                'path' => $path,
+                'pageName' => 'page',
+            ]);
+        
+            $result = $paginator;
+
+            return $result;
         }
         
     }
     public function searchAdmin (object $request)
     {
         if (strlen($request->input) == 12) {
-            $requests = [];
-            $request_item = Request::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
-            $requests[] = $request_item;
-            if ($request_item == null){
+            $requests = Request::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+            if ($requests == null){
                 return null;
             }
     
@@ -191,7 +203,23 @@ class RequestService
                 $requests[] = Request::where('card_id',$card->id)->first();
             }
 
-            return $requests;
+            $perPage = 15; 
+            $currentPage = request()->get('page', 1);
+            $offset = ($currentPage - 1) * $perPage;
+        
+            $items = array_slice($requests, $offset, $perPage);
+            
+            $path = url('/api/v1/requests/search'); 
+            
+            $paginator = new LengthAwarePaginator($items, count($requests), $perPage, $currentPage, [
+                'path' => $path,
+                'pageName' => 'page',
+            ]);
+        
+            $result = $paginator;
+
+            return $result;
+
         }
         
     }

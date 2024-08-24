@@ -3,6 +3,7 @@
 namespace App\Services\Api\V1;
 
 use App\Models\Notification;
+use App\Models\Request;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
@@ -29,7 +30,39 @@ class AdminService
             'users' => $users,
         ];
     }
-    
+
+    public function dashboard()
+    {
+        $user_count = User::count();
+        $pending_request_count = Request::where('status', 'pending')->count();
+        $request_count = Request::count();
+        $transaction_count = Transaction::count();
+        $pending_requests = Request::where('status', 'pending')->take(5);
+        $confirmed_requests = Request::where('status', 'confirmed')->get();
+        $withdrawals = Transaction::where('status', 'confirmed')->where('type', 'withdrawal')->get();
+
+        $array_of_confirmed_requests_amounts = [];
+        $array_of_withdrawal_amounts = [];
+
+        foreach ($confirmed_requests as $key => $confirmed_request) {
+            $array_of_confirmed_requests_amounts[] = $confirmed_request->total_amount;
+        }
+
+        foreach ($withdrawals as $key => $withdrawal) {
+            $array_of_withdrawal_amounts[] = $withdrawal->total_amount;
+        }
+
+        return [
+            'total_users' => $user_count,
+            'total_pending_requests' => $pending_request_count,
+            'total_requests' => $request_count,
+            'total_transactions' => $transaction_count,
+            'pending_requests' => $pending_requests,
+            'total_amount_made' => array_sum($array_of_confirmed_requests_amounts),
+            'total_amount_withdrawn' => array_sum($array_of_withdrawal_amounts),
+        ];
+    }
+
     public function updateUserBalance (object $request)
     {
         $user = User::findByUuid($request->uuid);
@@ -119,7 +152,9 @@ class AdminService
 
     public function getUser(String $uuid)
     {
-        $user = User::findByUuid($uuid);
+        $user = User::where('uuid', $uuid)->with(['wallet' => function ($query) {
+            $query->select('id', 'user_id', 'main_balance');
+        }])->with('transactions')->first();
         return $user;
     }
 

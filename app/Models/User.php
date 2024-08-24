@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Traits\CreateUuid;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -71,6 +72,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Wallet::class, 'user_id', 'id');
     }
+
+    public function transactions () : HasMany
+    {
+        return $this->hasMany(Transaction::class, 'user_id', 'id');
+    }
+
     public static function url ()
     {
         // return 'http://127.0.0.1:8150';

@@ -99,7 +99,7 @@ Route::middleware('api')->group(function () {
                     Route::get('user-transactions/{uuid}', 'userTransactions');
                     Route::get('transactions', 'getTransactions');                    
                     Route::get('transaction/pending', 'getPendingTransactions');                    
-                    Route::get('transaction/{uuid}', 'getTransaction');   
+                    Route::get('dashboard', 'dashboard');   
                     Route::post('transaction/search', 'searchAdmin');   
                 }); 
             });
