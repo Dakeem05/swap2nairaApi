@@ -37,7 +37,7 @@ class AdminService
         $pending_request_count = Request::where('status', 'pending')->count();
         $request_count = Request::count();
         $transaction_count = Transaction::count();
-        $pending_requests = Request::where('status', 'pending')->take(5);
+        $pending_requests = Request::where('status', 'pending')->with('card')->take(5)->get();
         $confirmed_requests = Request::where('status', 'confirmed')->get();
         $withdrawals = Transaction::where('status', 'confirmed')->where('type', 'withdrawal')->get();
 
