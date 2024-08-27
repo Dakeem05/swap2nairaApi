@@ -97,7 +97,7 @@ class AdminService
 
     public function searchForUser (object $request)
     {
-        $user = User::where('username','like','%'.$request->input.'%')->orWhere('email','like','%'.$request->input.'%')->orWhere('phone','like','%'.$request->input.'%')->latest()->paginate();
+        $user = User::where('username','like','%'.$request->input.'%')->orWhere('email','like','%'.$request->input.'%')->orWhere('phone','like','%'.$request->input.'%')->with('wallet')->latest()->paginate();
 
         if ($user == null){
             return null;
