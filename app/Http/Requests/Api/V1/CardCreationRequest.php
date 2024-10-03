@@ -29,6 +29,7 @@ class CardCreationRequest extends FormRequest
         return [
             'brand' => ['required', 'string'],
             'category' => ['required', 'string'],
+            'country' => ['required', 'string'],
             'type' => ['required', 'string', 'unique:cards,type'],
             'rate' => ['required', 'numeric'],
             'image' => ['sometimes', 'mimes:png,jpg,jpeg,webp', 'max:2048']

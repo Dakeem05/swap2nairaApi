@@ -28,6 +28,7 @@ class CardEditRequest extends FormRequest
     {
         return [
             'category' => ['sometimes', 'string'],
+            'country' => ['sometimes', 'string'],
             'type' => ['sometimes', 'string', 'unique:cards,type'],
             'rate' => ['sometimes', 'numeric'],
             'is_active' => ['sometimes'. 'boolean']

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid()->index();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('payment_method')->default('naira_wallet');
-            $table->foreignId('card_id')->constrained('cards');
+            $table->foreignId('card_id')->nullable()->constrained('cards')->nullOnDelete();
             $table->unsignedBigInteger('rate');
             $table->unsignedBigInteger('number');
             $table->unsignedBigInteger('total_amount');

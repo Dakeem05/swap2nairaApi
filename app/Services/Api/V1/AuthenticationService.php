@@ -123,28 +123,6 @@ class AuthenticationService
         
     }
 
-    // private function createRefCode($string_length = 8, $recursion_limit = 10)
-    // {
-    //     if ($recursion_limit <= 0) {
-    //         // We don't expect this to generate a code 10 times and all the codes are taken or for something to go wrong.
-    //         // If such happens which is rare but not impossible, break out of the recursive loop.
-    //         return null;
-    //     }
-
-    //     $randomString = Str::random($string_length);
-
-    //     if (! $this->checkIfCodeExists($randomString)) {
-    //         return $randomString;
-    //     } else {
-    //         return $this->createRefCode($string_length, $recursion_limit - 1);
-    //     }
-    // }
-
-    // private function checkIfCodeExists(string $code)
-    // {
-    //     return User::where('ref_code', $code)->exists();
-    // }   
-
     public function createWallet($user_id)
     {
         $wallet_service = new WalletService();

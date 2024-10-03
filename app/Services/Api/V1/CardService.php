@@ -4,6 +4,7 @@ namespace App\Services\Api\V1;
 
 use App\Traits\Api\V1\ApiResponseTrait;
 use App\Models\Card;
+use App\Models\Request;
 use App\Models\User;
 
 class CardService
@@ -12,7 +13,7 @@ class CardService
 
     public function index ()
     {
-        $card = Card::paginate(15);
+        $card = Card::orderBy('brand')->paginate(15);
         return $card;
     }
 
@@ -38,6 +39,7 @@ class CardService
                 'brand' => $request->brand,
                 'category' => $request->category,
                 'type' => $request->type,
+                'country' => $request->country,
                 'rate' => $request->rate,
                 'image' => $path
             ]);
@@ -68,6 +70,7 @@ class CardService
                 'category' => isset($request->category)? $request->category : $card->category,
                 'type' => isset($request->type)? $request->type : $card->type,
                 'rate' => isset($request->rate)? $request->rate : $card->rate,
+                'rate' => isset($request->country)? $request->country : $card->country,
                 'active' => isset($request->is_active)? $request->is_active : $card->active,
             ]);
             return true;
@@ -79,6 +82,14 @@ class CardService
     public function delete (Int $id)
     {
         $card = Card::find($id);
+        $requests = Request::where('card_id', $card->id)->get();
+
+        foreach ($requests as $request) {
+            $request->update([
+                'card_id' => null
+            ]);
+        }
+
         if ($card !== null) {
             $card->forceDelete();
             return true;
