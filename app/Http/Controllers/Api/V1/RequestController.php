@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\GetCategoriesRequest;
+use App\Http\Requests\Api\V1\GetCountriesRequest;
 use App\Http\Requests\Api\V1\RequestCreationRequest;
 use App\Http\Requests\Api\V1\RequestRejectionReasonRequest;
 use App\Http\Requests\Api\V1\SearchRequest;
@@ -21,6 +22,13 @@ class RequestController extends Controller
     public function getBrands ()
     {
         $res = $this->request_service->getBrands();
+        return $this->successResponse($res);
+    }
+
+    public function getCountries (GetCountriesRequest $request)
+    {
+        $_data = (Object) $request->validated();
+        $res = $this->request_service->getCountries($_data);
         return $this->successResponse($res);
     }
 

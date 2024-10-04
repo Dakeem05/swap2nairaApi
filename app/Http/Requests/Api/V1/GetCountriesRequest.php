@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class GetCategoriesRequest extends FormRequest
+class GetCountriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,6 @@ class GetCategoriesRequest extends FormRequest
     {
         return [
             'country' => ['required', 'string'],
-            'brand' => ['required', 'string'],
-            'category' => ['sometimes', 'string'],
         ];
     }
     public function failedValidation (Validator $validator)
