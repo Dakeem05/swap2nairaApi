@@ -70,7 +70,7 @@ class CardService
                 'category' => isset($request->category)? $request->category : $card->category,
                 'type' => isset($request->type)? $request->type : $card->type,
                 'rate' => isset($request->rate)? $request->rate : $card->rate,
-                'rate' => isset($request->country)? $request->country : $card->country,
+                'country' => isset($request->country)? $request->country : $card->country,
                 'active' => isset($request->is_active)? $request->is_active : $card->active,
             ]);
             return true;
