@@ -50,6 +50,7 @@ Route::middleware('api')->group(function () {
                 Route::get('get-brands', 'getBrands');
                 Route::post('search', 'search');
                 Route::post('get-categories', 'getCategories');
+                Route::post('get-countries', 'getCountries');
                 Route::post('', 'store');
 
             });
