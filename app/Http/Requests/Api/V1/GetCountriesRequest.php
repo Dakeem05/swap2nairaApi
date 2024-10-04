@@ -25,6 +25,7 @@ class GetCountriesRequest extends FormRequest
     {
         return [
             'country' => ['required', 'string'],
+            'brand' => ['required', 'string'],
         ];
     }
     public function failedValidation (Validator $validator)

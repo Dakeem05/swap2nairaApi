@@ -47,17 +47,17 @@ class RequestService
 
     public function getCountries ($request)
     {
-        $types = Card::where('country', $request->country)->where('active', true)->get();
+        $types = Card::where('brand', $request->brand)->where('country', $request->country)->where('active', true)->get();
         return $types;
     }
 
     public function getCategories ($request)
     {
         if (!isset($request->category)) {
-            $types = Card::where('country', $request->country)->where('brand', $request->brand)->where('active', true)->get();
+            $types = Card::where('brand', $request->brand)->where('country', $request->country)->where('active', true)->get();
             return $types;
         }
-        $types = Card::where('country', $request->country)->where('brand', $request->brand)->where('category', $request->category)->where('active', true)->get();
+        $types = Card::where('brand', $request->brand)->where('country', $request->country)->where('category', $request->category)->where('active', true)->get();
         return $types;
     }
 
