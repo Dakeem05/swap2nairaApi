@@ -47,8 +47,22 @@ class RequestService
 
     public function getCountries ($request)
     {
-        $types = Card::where('brand', $request->brand)->where('active', true)->get();
-        return $types;
+        $types = Card::where('brand', $request->brand)->where('active', true)->select('country')->get();
+
+        $res = [];
+        $trackedTypes = [];
+        
+        foreach ($types as $type) {
+            if (!in_array($type->country, $trackedTypes)) {
+                $arr = [
+                    'country' => $type->country,
+                ];
+                $trackedTypes[] = $type->country;
+                $res[] = $arr;
+            }
+        }
+        
+        return $res;
     }
 
     public function getCategories ($request)
