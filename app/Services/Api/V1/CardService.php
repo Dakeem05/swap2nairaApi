@@ -13,7 +13,7 @@ class CardService
 
     public function index ()
     {
-        $card = Card::orderBy('brand')->paginate(15);
+        $card = Card::orderBy('brand')->get();
         return $card;
     }
 
