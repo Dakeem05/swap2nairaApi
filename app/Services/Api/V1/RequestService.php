@@ -47,7 +47,7 @@ class RequestService
 
     public function getCountries ($request)
     {
-        $types = Card::where('brand', $request->brand)->where('country', $request->country)->where('active', true)->get();
+        $types = Card::where('brand', $request->brand)->where('active', true)->get();
         return $types;
     }
 

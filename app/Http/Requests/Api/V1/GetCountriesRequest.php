@@ -24,7 +24,6 @@ class GetCountriesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'country' => ['required', 'string'],
             'brand' => ['required', 'string'],
         ];
     }
