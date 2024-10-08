@@ -29,7 +29,7 @@ class CardEditRequest extends FormRequest
         return [
             'category' => ['required', 'string'],
             'country' => ['required', 'string'],
-            'type' => ['required', 'string', 'unique:cards,type'],
+            'type' => ['required', 'string'],
             'rate' => ['required', 'numeric'],
             'is_active' => ['sometimes'. 'boolean']
         ];
