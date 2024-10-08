@@ -78,6 +78,7 @@ Route::middleware('api')->group(function () {
             
             Route::group(['middleware' => 'isAdmin', 'prefix' => '/admin'], function () {
                 Route::resource('card', CardController::class);
+                Route::post('card/update/{id}', [CardController::class, 'update']);
                 Route::get('card-brands', [CardController::class, 'getGiftCardBrands']);
                 Route::get('/card-toggle/{id}', [CardController::class, 'toggleActiveState']);
                 Route::get('card-check/{brand}', [CardController::class, 'checkIfGiftCardExists']);

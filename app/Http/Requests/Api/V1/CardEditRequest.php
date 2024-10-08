@@ -27,10 +27,10 @@ class CardEditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category' => ['sometimes', 'string'],
-            'country' => ['sometimes', 'string'],
-            'type' => ['sometimes', 'string', 'unique:cards,type'],
-            'rate' => ['sometimes', 'numeric'],
+            'category' => ['required', 'string'],
+            'country' => ['required', 'string'],
+            'type' => ['required', 'string', 'unique:cards,type'],
+            'rate' => ['required', 'numeric'],
             'is_active' => ['sometimes'. 'boolean']
         ];
     }
