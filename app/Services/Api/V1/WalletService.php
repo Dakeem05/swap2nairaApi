@@ -5,6 +5,7 @@ namespace App\Services\Api\V1;
 use App\Mail\AdminWithdrawRequest;
 use App\Mail\UserWithdrawRequest;
 use App\Models\Notification;
+use App\Models\Request;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
@@ -21,6 +22,17 @@ class WalletService
     {
         if (! in_array($type, ['main', 'sub'])) {
             return false;
+        }
+
+        $user = User::find($user_id);
+
+        if ($user->referrer_code !== null) {
+            $referrer = User::where('username', $user->referrer_code)->first();
+
+            $ref_wallet = Wallet::where('user_id', $referrer->id)->first();
+            $ref_wallet->update([
+                'referral_balance' => $ref_wallet->referral_balance + 1000
+            ]);
         }
 
         return Wallet::create([
@@ -70,7 +82,6 @@ class WalletService
             ])->post(env('FLW_PAYMENT_URL').'/transfers', $data);
             $res = json_decode($response->getBody());
             
-            // if (true == true) {
             if ($res->data->is_approved == true) {
                 $this->updateWalletBalance($user_id, $request->amount, 'debit');
                 Transaction::create([
@@ -92,28 +103,6 @@ class WalletService
                     Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
                     Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
                 }
-                // sleep(20);
-                // $response_retrieve = Http::withHeaders([
-                //     "Authorization"=> 'Bearer '.env('FLW_SECRET_KEY'),
-                //     "Cache-Control" => 'no-cache',
-                // ])->get(env('FLW_PAYMENT_URL').'/v3/transfers/'.$res->data->id);
-                // $res_retrieve = json_decode($response_retrieve->getBody());
-        
-                // $transfer = Transfer::find($transfer_id->id);
-                // $transfer->update(['status'=> strtolower($res_retrieve->data->status)]);
-        
-                // // $message_array = explode(":", $res_retrieve->data->complete_message);
-        
-                // if(strtolower($res_retrieve->data->status) == "failed"){
-                //     return ApiResponse::errorResponse($res_retrieve->data->complete_message);
-                // } else if (strtolower($res_retrieve->data->status) == "successful") {
-                //     return ApiResponse::successResponse([
-                //         'mesage'=>$res_retrieve->data->complete_message,
-                //         'data' => $res_retrieve->data
-                //     ]);
-                // } else {
-                //     return ApiResponse::successResponse($res_retrieve->data->complete_message);
-                // }
                 return true;
             }
             return false;
@@ -232,4 +221,26 @@ class WalletService
         
     }
     
+    public function withdrawReferralBalance (int $user_id) 
+    {
+        $wallet = Wallet::where('user_id', $user_id)->first();
+
+        $successful_requests = Request::where('user_id', $user_id)->where('status', 'confirmed')->count();
+
+        if ($successful_requests >= 1) {
+            $wallet->update([
+                'main_balance' => $wallet->main_balance,
+                'referral_balance' => 0
+            ]);
+
+            return (object) [
+                'success' => true,
+                'message' => 'Referral balance withdrawn successfully'
+            ];
+        } 
+        return (object) [
+            'success' => false,
+            'message' => 'User has to complete a successful sell request'
+        ];
+    }
 }

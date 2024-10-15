@@ -75,4 +75,13 @@ class WalletController extends Controller
         }
         return $this->notFoundResponse("Transaction not found!!");
     }
+
+    public function withdrawReferralBalance () 
+    {
+        $res = $this->wallet_service->withdrawReferralBalance(auth()->user()->id);
+        if ($res->success == true) {
+            return $this->successResponse($res->message);
+        }
+        return $this->errorResponse($res->message);
+    }
 }

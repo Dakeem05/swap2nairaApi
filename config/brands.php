@@ -7,6 +7,8 @@ return [
     'discover' => 'Discover',
     'diners_club' => 'Diners Club',
     'jcb' => 'JCB',
+    'vanilla' => 'Vanilla',
+    'razer gold' => 'Razer Gold',
     'maestro' => 'Maestro',
     'unionpay' => 'UnionPay',
     'mir' => 'Mir',

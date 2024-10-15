@@ -58,6 +58,7 @@ Route::middleware('api')->group(function () {
             Route::prefix('wallet')->controller(WalletController::class)->group(function () {
                 Route::get('balance', 'getUserBalance');
                 Route::post('withdraw', 'withdraw');
+                Route::get('withdraw-referral-balance', 'withdrawReferralBalance');
             });
 
             Route::prefix('transaction')->controller(WalletController::class)->group(function () {

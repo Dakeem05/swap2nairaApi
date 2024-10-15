@@ -61,7 +61,7 @@ class AuthenticationService
                 foreach ($admins as $key => $admin) {
                     Notification::Notify($admin->id, "A new user has just registered on swap2naira.com");
                 }
-
+                
                 return true;
             } else {
                 return false;
