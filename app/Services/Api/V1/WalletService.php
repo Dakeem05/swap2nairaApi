@@ -227,14 +227,14 @@ class WalletService
 
         $successful_requests = Request::where('user_id', $user_id)->where('status', 'confirmed')->count();
 
+        if ($wallet->referral_balance <= 0) {
+            return (object) [
+                'success' => false,
+                'message' => 'User has no referral balance'
+            ];
+        }
+        
         if ($successful_requests >= 1) {
-            if ($wallet->referral_balance <= 0) {
-                return (object) [
-                    'success' => false,
-                    'message' => 'User has no referral balance'
-                ];
-            }
-            
             $wallet->update([
                 'main_balance' => $wallet->main_balance + $wallet->referral_balance,
                 'referral_balance' => 0
