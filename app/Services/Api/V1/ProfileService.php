@@ -52,6 +52,19 @@ class ProfileService
         return true;
     }
 
+    public function manuallyAddBank ($request, $user_id)
+    {
+        $wallet = Wallet::where('user_id', $user_id)->first();
+
+        Notification::Notify($user_id, "Congratulations on your successful bank account setup. You can now start making payments.");
+
+        return $wallet->update([
+            'account_name' => $request->account_name,
+            'account_number' => $request->account_number,
+            'bank_name' => $request->bank_name,
+        ]);
+    }
+
     public function setPin(object $request, int $user_id)
     {
         $wallet = Wallet::where('user_id', $user_id)->first();

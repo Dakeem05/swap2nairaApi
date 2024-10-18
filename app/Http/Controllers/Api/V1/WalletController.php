@@ -84,4 +84,5 @@ class WalletController extends Controller
         }
         return $this->errorResponse($res->message);
     }
+
 }

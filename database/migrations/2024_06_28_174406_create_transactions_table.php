@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('reference')->nullable();
             $table->string('tnx_id')->nullable();
             $table->string('flw_status')->nullable();
-            // $table->unsignedBigInteger('flw_fee')->nullable();
             $table->double('flw_fee')->nullable();
             $table->softDeletes()->index();
             $table->timestamps();

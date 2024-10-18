@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\AddBankRequest;
 use App\Http\Requests\Api\V1\ChangePasswordRequest;
 use App\Http\Requests\Api\V1\ChangePinRequest;
+use App\Http\Requests\Api\V1\ManuallyAddBankRequest;
 use App\Http\Requests\Api\V1\ResolveBankRequest;
 use App\Http\Requests\Api\V1\SetPinRequest;
 use App\Http\Requests\Api\V1\UpdateProfileRequest;
@@ -45,6 +46,15 @@ class ProfileController extends Controller
             return $this->successResponse('Bank account added successfully.');
         }
         return $this->serverErrorResponse('An error occurred.');
+    }
+
+    public function manuallyAddBank (ManuallyAddBankRequest $request)
+    {
+        $res = $this->profile_service->manuallyAddBank((object) $request->validated(), auth()->user()->id);
+        if ($res) {
+            return $this->successResponse('Bank details added successfully');
+        }
+        return $this->errorResponse('An error occured while adding bank details');
     }
 
     public function setPin(SetPinRequest $request)

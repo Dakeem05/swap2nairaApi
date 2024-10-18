@@ -66,50 +66,81 @@ class WalletService
         try {
             $random = 'swap2naira_'.Str::random(20);
 
-            $data = array(
-                "account_bank"=> $wallet->bank_code,
-                "account_number"=> $wallet->account_number,
-                "amount"=> $request->amount,
-                "currency"=> "NGN",
-                "debit_currency"=> "NGN",
-                "reference"=> $random,
-                "narration" => "Swap2Naira Transfer ₦".$request->amount
-            );
+            $this->updateWalletBalance($user_id, $request->amount, 'debit');
 
-            $response = Http::withHeaders([
-                "Authorization"=> 'Bearer '.env('FLW_SECRET_KEY'),
-                "Cache-Control" => 'no-cache',
-            ])->post(env('FLW_PAYMENT_URL').'/transfers', $data);
-            $res = json_decode($response->getBody());
+            Transaction::create([
+                'user_id' => $user_id,
+                'request_id' => null,
+                'amount' => $request->amount,
+                'reference' => $random,
+                'type' => 'withdrawal',
+                'status' => 'pending'
+            ]);
+
+            $user = User::find($user_id);
+            $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
+            Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
+            Mail::to($user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
+            $admins = User::where('role', 'admin')->get();
             
-            if ($res->data->is_approved == true) {
-                $this->updateWalletBalance($user_id, $request->amount, 'debit');
-                Transaction::create([
-                    'user_id' => $user_id,
-                    'request_id' => null,
-                    'amount' => $request->amount,
-                    'flw_fee' => $res->data->fee,
-                    'flw_status' => $res->data->status,
-                    'reference' => $res->data->reference,
-                    'type' => 'withdrawal',
-                    'tnx_id' => $res->data->id
-                ]);
-                $user = User::find($user_id);
-                $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
-                Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
-                Mail::to($user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
-                $admins = User::where('role', 'admin')->get();
-                foreach ($admins as $key => $admin) {
-                    Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
-                    Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
-                }
-                return true;
+            foreach ($admins as $key => $admin) {
+                Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
+                Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
             }
-            return false;
         } catch (\Exception $th) {
             throw $th; 
             return false;
         }
+
+        //Would uncomment after flutterwave api key is given
+
+        // try {
+        //     $random = 'swap2naira_'.Str::random(20);
+
+        //     $data = array(
+        //         "account_bank"=> $wallet->bank_code,
+        //         "account_number"=> $wallet->account_number,
+        //         "amount"=> $request->amount,
+        //         "currency"=> "NGN",
+        //         "debit_currency"=> "NGN",
+        //         "reference"=> $random,
+        //         "narration" => "Swap2Naira Transfer ₦".$request->amount
+        //     );
+
+        //     $response = Http::withHeaders([
+        //         "Authorization"=> 'Bearer '.env('FLW_SECRET_KEY'),
+        //         "Cache-Control" => 'no-cache',
+        //     ])->post(env('FLW_PAYMENT_URL').'/transfers', $data);
+        //     $res = json_decode($response->getBody());
+            
+        //     if ($res->data->is_approved == true) {
+        //         $this->updateWalletBalance($user_id, $request->amount, 'debit');
+        //         Transaction::create([
+        //             'user_id' => $user_id,
+        //             'request_id' => null,
+        //             'amount' => $request->amount,
+        //             'flw_fee' => $res->data->fee,
+        //             'flw_status' => $res->data->status,
+        //             'reference' => $res->data->reference,
+        //             'type' => 'withdrawal',
+        //             'tnx_id' => $res->data->id
+        //         ]);
+        //         $user = User::find($user_id);
+        //         $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
+        //         Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
+        //         Mail::to($user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
+        //         $admins = User::where('role', 'admin')->get();
+        //         foreach ($admins as $key => $admin) {
+        //             Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
+        //             Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
+        //         }
+        //         return true;
+        //     }
+        //     return false;
+        // } catch (\Exception $th) {
+        //     throw $th; 
+        //     return false;
+        // }
 
     }
 
@@ -250,4 +281,6 @@ class WalletService
             'message' => 'User has to complete a successful sell request'
         ];
     }
+
+    
 }

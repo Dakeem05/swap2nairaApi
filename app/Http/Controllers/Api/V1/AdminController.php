@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\RequestRejectionReasonRequest;
 use App\Http\Requests\Api\V1\SearchRequest;
 use App\Http\Requests\Api\V1\UpdateUserBalanceRequest;
 use App\Services\Api\V1\AdminService;
@@ -121,5 +122,24 @@ class AdminController extends Controller
             return $this->successResponse($res);
         }
         return $this->notFoundResponse("Transaction not found!!");
+    }
+
+    public function withdrawalAction(RequestRejectionReasonRequest $request, string $uuid, string $action)
+    {
+        if ($action == false) {
+            $res = $this->admin_service->withdrawalAction($uuid, $action, (Object) $request->validated());
+        }
+        $res = $this->admin_service->withdrawalAction($uuid, $action, (Object) null);
+
+        if ($res === 'treated') {
+            return $this->errorResponse('Withdrawal request has already been accepted or rejected');
+        } else if ($res === 'confirmed') {
+            return $this->successResponse('Request confirmed successfully.');
+        } else if ($res === 'reason') {
+            return $this->successResponse('Input rejection reason (compulsory) or image.');
+        } else if ($res === 'rejected') {
+            return $this->successResponse('Request declined successfully.');
+        }
+        return $this->notFoundResponse('Transaction not found.');
     }
 }

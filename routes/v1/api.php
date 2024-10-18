@@ -104,6 +104,7 @@ Route::middleware('api')->group(function () {
                     Route::get('transaction/pending', 'getPendingTransactions');                    
                     Route::get('dashboard', 'dashboard');   
                     Route::post('transaction/search', 'searchAdmin');   
+                    Route::post('withdrawal-action/{uuid}/{action}', 'withdrawalAction');
                 }); 
             });
         });

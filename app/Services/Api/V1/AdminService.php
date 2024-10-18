@@ -2,6 +2,10 @@
 
 namespace App\Services\Api\V1;
 
+use App\Mail\AdminWithdrawalRequestRejection;
+use App\Mail\AdminWithdrawRequestPayment;
+use App\Mail\UserWithdrawalRequestRejection;
+use App\Mail\UserWithdrawRequestPayment;
 use App\Models\Notification;
 use App\Models\Request;
 use App\Models\Transaction;
@@ -11,6 +15,7 @@ use App\Traits\Api\V1\ApiResponseTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 use function PHPUnit\Framework\isNull;
 
@@ -178,7 +183,7 @@ class AdminService
 
     public function searchAdmin (object $request)
     {
-        $transactions= Transaction::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
+        $transactions = Transaction::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
         
         if ($transactions == null){
             return null;
@@ -186,6 +191,88 @@ class AdminService
 
         return $transactions;
         
+    }
+
+    public function withdrawalAction (string $uuid, bool $action, Object $data)
+    {
+        $transaction = Transaction::where('uuid', $uuid)->first();
+
+        if ($transaction == null){
+            return null;
+        }
+
+        if ($transaction->status !== 'pending') {
+            return 'treated';
+        }
+
+        if ($action == true) {
+            $transaction->update([
+                'status' => 'confirmed',
+                'sent_mail' => true
+            ]);
+            $wallet = Wallet::where('user_id', $transaction->user_id)->with('user')->first();
+            $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
+            Notification::Notify($transaction->user_id, "Your requested withdrawal of ₦".$transaction->amount. ' has been paid.');
+            Mail::to($wallet->user->email)->send(new UserWithdrawRequestPayment($name, $transaction->amount, $wallet->main_balance));
+            $admins = User::where('role', 'admin')->get();
+            foreach ($admins as $key => $admin) {
+                Mail::to($admin->email)->send(new AdminWithdrawRequestPayment($name, $transaction->amount));
+                Notification::Notify($admin->id, "$name's request withdrawal of ₦$transaction->amount has been paid.");
+            }
+
+            return 'confirmed';
+        }
+        
+        if (isset($data->reason)) {
+            $image = '';
+            if (isset($data->image)) {
+
+                $imagee = time().'.'.$data->image->getClientOriginalExtension();
+                $destinationPath = public_path().'/uploads/images/rejectionImages/';
+                $data->image->move($destinationPath, $imagee);
+                $path = env('APP_URL').'/images/'.$imagee;
+                $image = $path;                 
+                $transaction->update([
+                    'rejection_image' => $image,
+                ]);
+            }
+            
+            $transaction->update([
+                'rejection_reason' => $data->reason,
+                'status' => 'declined',
+                'sent_mail' => true
+            ]);
+
+
+            $this->updateWalletBalance($transaction->user_id, $transaction->amount, 'credit');
+            $wallet = Wallet::where('user_id', $transaction->user_id)->with('user')->first();
+            $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
+            Notification::Notify($transaction->user_id, "Your requested withdrawal of ₦".$transaction->amount.' has been rejected. Check the email sent to you with the reason of the rejection.');
+            Mail::to($wallet->user->email)->send(new UserWithdrawalRequestRejection($name, $transaction->amount, $wallet->main_balance, $data->reason, $image == "" ? null : $image));
+            $admins = User::where('role', 'admin')->get();
+            foreach ($admins as $key => $admin) {
+                Mail::to($admin->email)->send(new AdminWithdrawalRequestRejection($name, $transaction->amount));
+                Notification::Notify($admin->id, "$name's request withdrawal of ₦$transaction->amount has been rejected. The reason for the rejection has been emailed to the user.");
+            }
+            return 'rejected';
+        }
+        return 'reason';
+    }
+
+    private function updateWalletBalance(int $user_id, float $amount, string $type)
+    {
+        $wallet = Wallet::where('user_id', $user_id)->first();
+
+        if ($wallet) {
+            $opening_balance = $wallet->main_balance;
+            $closing_balance = $type === 'credit' ? $opening_balance + $amount : $opening_balance - $amount;
+
+            return $wallet->update([
+                'main_balance' => $closing_balance,
+            ]);
+        }
+
+        return false;
     }
 }
 
