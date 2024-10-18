@@ -39,6 +39,7 @@ Route::middleware('api')->group(function () {
                 Route::post('change-password', 'changePassword');
                 Route::post('update', 'updateProfile');
                 Route::get('delete', 'delete');
+                Route::post('manually-add-account', 'manuallyAddBank');
             });
 
             Route::prefix('card')->controller(CardController::class)->group(function () {
