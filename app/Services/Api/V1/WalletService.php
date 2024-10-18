@@ -63,33 +63,28 @@ class WalletService
             return 'wrong';
         }
 
-        try {
-            $random = 'swap2naira_'.Str::random(20);
+        $random = 'swap2naira_'.Str::random(20);
 
-            $this->updateWalletBalance($user_id, $request->amount, 'debit');
+        $this->updateWalletBalance($user_id, $request->amount, 'debit');
 
-            Transaction::create([
-                'user_id' => $user_id,
-                'request_id' => null,
-                'amount' => $request->amount,
-                'reference' => $random,
-                'type' => 'withdrawal',
-                'status' => 'pending'
-            ]);
+        Transaction::create([
+            'user_id' => $user_id,
+            'request_id' => null,
+            'amount' => $request->amount,
+            'reference' => $random,
+            'type' => 'withdrawal',
+            'status' => 'pending'
+        ]);
 
-            $user = User::find($user_id);
-            $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
-            Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
-            Mail::to($user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
-            $admins = User::where('role', 'admin')->get();
-            
-            foreach ($admins as $key => $admin) {
-                Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
-                Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
-            }
-        } catch (\Exception $th) {
-            throw $th; 
-            return false;
+        $user = User::find($user_id);
+        $name = strtoupper($wallet->user->name !== null ? $wallet->user->name : $wallet->user->username);
+        Notification::Notify($user_id, "You just requested withdrawal of ₦".$request->amount.'.');
+        Mail::to($user->email)->send(new UserWithdrawRequest($name, $request->amount, $wallet->main_balance));
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($admins as $key => $admin) {
+            Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
+            Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
         }
 
         //Would uncomment after flutterwave api key is given
