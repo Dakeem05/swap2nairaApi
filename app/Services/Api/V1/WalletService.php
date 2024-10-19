@@ -73,7 +73,8 @@ class WalletService
             'amount' => $request->amount,
             'reference' => $random,
             'type' => 'withdrawal',
-            'status' => 'pending'
+            'status' => 'pending',
+            'wallet_id' => $wallet->id
         ]);
 
         $user = User::find($user_id);
@@ -86,6 +87,8 @@ class WalletService
             Mail::to($admin->email)->send(new AdminWithdrawRequest($name, $request->amount));
             Notification::Notify($admin->id, $wallet->user->name !== null ? $wallet->user->name : $wallet->user->username." just requested withdrawal of ₦".$request->amount.'.');
         }
+
+        return true;
 
         //Would uncomment after flutterwave api key is given
 

@@ -115,6 +115,12 @@ class AdminController extends Controller
         return $this->errorResponse('Transaction not found.', null, 404);
     }
 
+    public function getWithdrawalTransactions ()
+    {
+        $res = $this->admin_service->getWithdrawalTransactions();
+        return $this->successResponse($res);
+    }
+
     public function searchAdmin(SearchRequest $request) 
     {
         $res = $this->admin_service->searchAdmin((Object) $request->validated());

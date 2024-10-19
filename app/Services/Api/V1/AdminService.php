@@ -181,6 +181,12 @@ class AdminService
         return $transactions;
     }
 
+    public function getWithdrawalTransactions ()
+    {
+        $transactions = Transaction::where('type', 'withdrawal')->with('wallet')->with('user')->get();
+        return $transactions;
+    }
+
     public function searchAdmin (object $request)
     {
         $transactions = Transaction::where('uuid','like','%'.$request->input.'%')->latest()->paginate();
