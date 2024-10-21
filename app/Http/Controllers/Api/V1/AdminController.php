@@ -115,9 +115,9 @@ class AdminController extends Controller
         return $this->errorResponse('Transaction not found.', null, 404);
     }
 
-    public function getWithdrawalTransactions ()
+    public function getWithdrawalTransaction (string $uuid)
     {
-        $res = $this->admin_service->getWithdrawalTransactions();
+        $res = $this->admin_service->getWithdrawalTransaction($uuid);
         return $this->successResponse($res);
     }
 
@@ -140,7 +140,7 @@ class AdminController extends Controller
         if ($res === 'treated') {
             return $this->errorResponse('Withdrawal request has already been accepted or rejected');
         } else if ($res === 'confirmed') {
-            return $this->successResponse('Request confirmed successfully.');
+            return $this->successResponse('Withdrawal request confirmed successfully.');
         } else if ($res === 'reason') {
             return $this->successResponse('Input rejection reason (compulsory) or image.');
         } else if ($res === 'rejected') {

@@ -103,7 +103,7 @@ Route::middleware('api')->group(function () {
                     Route::get('user-transactions/{uuid}', 'userTransactions');
                     Route::get('transactions', 'getTransactions');                    
                     Route::get('transaction/pending', 'getPendingTransactions');
-                    Route::get('transactions/withdrawal', 'getWithdrawalTransactions');                
+                    Route::get('transaction/withdrawal/{uuid}', 'getWithdrawalTransaction');                
                     Route::get('dashboard', 'dashboard');   
                     Route::post('transaction/search', 'searchAdmin');   
                     Route::post('withdrawal-action/{uuid}/{action}', 'withdrawalAction');

@@ -181,9 +181,9 @@ class AdminService
         return $transactions;
     }
 
-    public function getWithdrawalTransactions ()
+    public function getWithdrawalTransaction (string $uuid)
     {
-        $transactions = Transaction::where('type', 'withdrawal')->with('wallet')->with('user')->get();
+        $transactions = Transaction::where('type', 'withdrawal')->where('uuid', $uuid)->with('wallet')->with('user')->get();
         return $transactions;
     }
 
